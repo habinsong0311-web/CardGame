@@ -12,7 +12,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         player1Deck.InitializeDeck();
-        DrawPlayer1Card();
+        for (int i = 0; i < 5; i++)
+        {
+            DrawPlayer1Card();
+        }
+        
     }
 
     private void DrawPlayer1Card()

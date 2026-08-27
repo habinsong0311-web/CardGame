@@ -15,18 +15,35 @@ public class CardView : MonoBehaviour
     [SerializeField] private TMP_Text explanationText;
     [SerializeField] private TMP_Text keywordText;
 
-    void Start()
-    {
-        if (cardSetting != null)
-        {
-            artworkImage.sprite = cardSetting.Artwork;
-            nameText.text = cardSetting.CardName;
-            costText.text = cardSetting.Cost.ToString();
-            attackText.text = cardSetting.Attack.ToString();
-            healthText.text = cardSetting.MaxHealth.ToString();
-            explanationText.text = cardSetting.Explanation;
-            keywordText.text = string.Join(", ", cardSetting.Keywords);
-        }
+    //void Start()
+    //{
+    //    if (cardSetting != null)
+    //    {
+    //        artworkImage.sprite = cardSetting.Artwork;
+    //        nameText.text = cardSetting.CardName;
+    //        costText.text = cardSetting.Cost.ToString();
+    //        attackText.text = cardSetting.Attack.ToString();
+    //        healthText.text = cardSetting.MaxHealth.ToString();
+    //        explanationText.text = cardSetting.Explanation;
+    //        keywordText.text = string.Join(", ", cardSetting.Keywords);
+    //    }
         
+    //}
+    //테스트용 스타트
+    public void Setup(CardSetting cardData)
+    {
+        if (cardData == null)
+        {
+            return;
+        }
+        cardSetting = cardData;
+        artworkImage.sprite = cardSetting.Artwork;
+        nameText.text = cardSetting.CardName;
+        costText.text = cardSetting.Cost.ToString();
+        attackText.text = cardSetting.Attack.ToString();
+        healthText.text = cardSetting.MaxHealth.ToString();
+        explanationText.text = cardSetting.Explanation;
+        keywordText.text = string.Join(", ", cardSetting.Keywords);
+
     }
 }
