@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 650ab5c76b5cbef4da0b5e38dbe31689, type: 3}
+  m_Name: "\uCE58\uC720\uC0AC\uC81C"
+  m_EditorClassIdentifier: Assembly-CSharp::CardSetting
+  cardId: 004
+  artwork: {fileID: 0}
+  cardType: 0
+  cardName: "\uCE58\uC720 \uC0AC\uC81C"
+  cost: 2
+  attack: 2
+  maxHealth: 3
+  explanation: "\uCC44\uB825\uC744 \uCE90\uB9AD\uD130\uC758 \uCCB4\uB825\uB9CC\uD07C
+    \uD68C\uBCF5\uD55C\uB2E4"
+  keywords: 
