@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\uD654\uC5FC\uAD6C"
   m_EditorClassIdentifier: Assembly-CSharp::CardSetting
   cardId: 009
-  artwork: {fileID: 0}
+  artwork: {fileID: -6607481912129624618, guid: f8376ca5894547842af837ae1d792cdc, type: 3}
   cardType: 1
   cardName: "\uD654\uC5FC\uAD6C"
   cost: 4

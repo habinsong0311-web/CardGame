@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: "\uB3CC\uACA9 \uAE30\uC0AC"
   m_EditorClassIdentifier: Assembly-CSharp::CardSetting
   cardId: 005
-  artwork: {fileID: 0}
+  artwork: {fileID: -4451148149754760953, guid: 485cc003fdf770844b6efd1815b66950, type: 3}
   cardType: 0
   cardName: "\uB3CC\uACA9 \uAE30\uC0AC"
   cost: 3
   attack: 3
   maxHealth: 2
+  effectValue: 0
   explanation: 
   keywords: 00000000

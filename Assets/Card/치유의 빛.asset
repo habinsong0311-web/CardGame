@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\uCE58\uC720\uC758 \uBE5B"
   m_EditorClassIdentifier: Assembly-CSharp::CardSetting
   cardId: 010
-  artwork: {fileID: 0}
+  artwork: {fileID: -1579994203942510013, guid: cc429a1b7ad8dfc4b84f04bcf23755d1, type: 3}
   cardType: 1
   cardName: "\uCE58\uC720\uC758 \uBE5B"
   cost: 3

@@ -55,6 +55,17 @@ public class Deck : MonoBehaviour
     public void InitializeDeck()
     {
         CreateDeck();
+        ShuffleDeck();
+    }
+    public void ShuffleDeck()
+    {
+        for (int i = remainingCards.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            CardSetting temporaryCard = remainingCards[i];
+            remainingCards[i] = remainingCards[randomIndex];
+            remainingCards[randomIndex] = temporaryCard;
+        }
     }
 }
 

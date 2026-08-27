@@ -22,6 +22,11 @@ public class Hand : MonoBehaviour
             return;
             //나중에 패배 추가
         }
+        if (cards.Count >= maxHandSize)
+        {
+            graveyard.AddCard(card);
+            return;
+        }
         cards.Add(card);
         CreateCardView(card);
         DiscardExcessCards();
