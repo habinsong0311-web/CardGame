@@ -15,10 +15,10 @@ MonoBehaviour:
   cardId: 011
   artwork: {fileID: 0}
   cardType: 0
-  cardName: "\uC6A9"
-  cost: 0
-  attack: 0
-  maxHealth: 0
+  cardName: "\uC6A9\uC0AC"
+  cost: 8
+  attack: 10
+  maxHealth: 10
   effectValue: 0
   explanation: 
   keywords: 

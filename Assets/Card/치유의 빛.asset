@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardSetting
   cardId: 010
   artwork: {fileID: 0}
-  cardType: 0
+  cardType: 1
   cardName: "\uCE58\uC720\uC758 \uBE5B"
   cost: 3
   attack: 0
