@@ -15,13 +15,6 @@ public class Deck : MonoBehaviour
     [Header("덱 구성")]
     [SerializeField] private List<DeckEntry> deckEntries = new List<DeckEntry>(); // 저장된 덱
     private List<CardSetting> remainingCards = new List<CardSetting>(); // 플레이 덱
-
-    //테스트
-    private void Start()
-    {
-        CreateDeck();
-    }
-
     //시작시 덱을 저장된 덱을 복사
     private void CreateDeck()
     {
@@ -43,6 +36,25 @@ public class Deck : MonoBehaviour
     {
         deckCount = remainingCards.Count;
         deckCountText.text = deckCount.ToString();
+    }
+    public CardSetting DrawCard()
+    {
+        if (remainingCards.Count <= 0)
+        {
+            Debug.Log("덱에 카드가 없습니다.");
+            return null;
+            //나중에 패배처리?
+        }
+        int lastIndex = remainingCards.Count - 1;
+        CardSetting drawnCard = remainingCards[lastIndex];
+
+        remainingCards.RemoveAt(lastIndex);
+        UpdateDeckCount();
+        return drawnCard;
+    }
+    public void InitializeDeck()
+    {
+        CreateDeck();
     }
 }
 
