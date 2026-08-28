@@ -5,7 +5,8 @@ public class Hand : MonoBehaviour
 {
     [Header("연결")]
     [SerializeField]private Graveyard graveyard;
-
+    [Header("카드 미리보기")]
+    [SerializeField] private CardPreviewRoot cardPreviewRoot;
     [Header("손패 설정")]
     private int maxHandSize = 8;
     private List<CardSetting> cards = new List<CardSetting>();
@@ -44,17 +45,27 @@ public class Hand : MonoBehaviour
     }
     private void CreateCardView(CardSetting card)
     {
+        CardView cardView = null;
         if (card.CardType == CardType.Unit)
         {
-            CardView cardView = Instantiate(unitCardPrefab, transform);
-            cardView.Setup(card);
+            cardView = Instantiate(unitCardPrefab, transform);
         }
         else if (card.CardType == CardType.Skill)
         {
-            CardView cardView = Instantiate(skillCardPrefab, transform);
-            cardView.Setup(card);
+            cardView = Instantiate(skillCardPrefab, transform);
         }
-        
+        if (cardView == null)
+        {
+            return;
+        }
+        cardView.Setup(card);
+        CardPreview cardPreview = cardView.GetComponent<CardPreview>();
+        if (cardPreview != null)
+        {
+            cardPreview.Setup(card, cardPreviewRoot);
+        }
+
+
     }
 
 
