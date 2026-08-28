@@ -5,8 +5,11 @@ public class TurnManager : MonoBehaviour
     [Header("플레이어")]
     [SerializeField] private PlayerState player1;
     [SerializeField] private PlayerState player2;
-
     public PlayerState currentPlayer;
+
+    [Header("연결")]
+    [SerializeField] private CardPlayManager cardPlayManager;
+
 
     public void StartGame()
     {
@@ -37,6 +40,7 @@ public class TurnManager : MonoBehaviour
     }
     public void EndTurn()
     {
+        cardPlayManager.ClearSelection();
         if (currentPlayer == player1)
         {
             currentPlayer = player2;
@@ -46,6 +50,11 @@ public class TurnManager : MonoBehaviour
             currentPlayer = player1;
         }
         StartTurn();
+    }
+    public bool IsCurrentPlayer(PlayerState player)
+    {
+        //턴을 확인하는 함수
+        return currentPlayer == player;
     }
 
 }

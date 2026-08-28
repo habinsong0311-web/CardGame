@@ -5,6 +5,9 @@ public class Hand : MonoBehaviour
 {
     [Header("연결")]
     [SerializeField]private Graveyard graveyard;
+    [SerializeField]private CardPlayManager cardPlayManager;
+    [SerializeField] private PlayerState player;
+    public PlayerState Player => player;
     [Header("카드 미리보기")]
     [SerializeField] private CardPreviewRoot cardPreviewRoot;
     [Header("손패 설정")]
@@ -43,6 +46,15 @@ public class Hand : MonoBehaviour
             graveyard.AddCard(discardedCard);
         }
     }
+    public void RemoveCard(CardSetting card,CardView cardView)
+    {
+        if (card == null || cardView == null)
+        {
+            return;
+        }
+        cards.Remove(card);
+        Destroy(cardView.gameObject);
+    }
     private void CreateCardView(CardSetting card)
     {
         CardView cardView = null;
@@ -64,8 +76,12 @@ public class Hand : MonoBehaviour
         {
             cardPreview.Setup(card, cardPreviewRoot);
         }
+        CardSelect cardSelect = cardView.GetComponent<CardSelect>();
+        if (cardSelect != null)
+        {
+            cardSelect.Setup(card,cardView,this,cardPlayManager);
 
-
+        }
     }
 
 

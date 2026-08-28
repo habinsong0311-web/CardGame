@@ -4,6 +4,7 @@ public class PlayerField : MonoBehaviour
 {
     [Header("필드 슬롯")]
     [SerializeField] private Transform[] slots;
+    [SerializeField] private FieldSlot[] fieldSlots;
     [Header("필드 유닛 프리팹")]
     [SerializeField] private UnitBoardCardView unitBoardPrefab;
     private UnitBoardCardView[] units;
@@ -17,7 +18,6 @@ public class PlayerField : MonoBehaviour
         {
             return false;
         }
-
         return units[slotIndex] == null;
     }
     public bool Summon(CardSetting card, int slotIndex)
@@ -47,5 +47,26 @@ public class PlayerField : MonoBehaviour
             unitRect.localScale = Vector3.one;
         }
         return true;
+    }
+    public void ShowAvailableSlots()
+    {
+        for (int i = 0; i < fieldSlots.Length; i++)
+        {
+            if (IsSlotEmpty(i))
+            {
+                fieldSlots[i].ShowHighlight();
+            }
+            else
+            {
+                fieldSlots[i].HideHighlight();
+            }
+        }
+    }
+    public void HideAllSlots()
+    {
+        foreach (FieldSlot fieldSlot in fieldSlots)
+        {
+            fieldSlot.HideHighlight();
+        }
     }
 }

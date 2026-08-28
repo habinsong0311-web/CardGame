@@ -17,9 +17,13 @@ public class PlayerState : MonoBehaviour
     [SerializeField] private Deck deck;
     [SerializeField] private Hand hand;
     [SerializeField] private Graveyard graveyard;
+    [Header("필드 연결")]
+    [SerializeField] private PlayerField field;
+    public PlayerField Field => field;
 
     public string PlayerName => playerName;
     public int CurrentHealth => currentHealth;
+    public int CurrentLight => currentLight;
 
     public Deck Deck => deck;
     public Hand Hand => hand;
@@ -51,6 +55,7 @@ public class PlayerState : MonoBehaviour
             return;
         }
         currentLight -= spendLight;
+        UpdateLightText();
     }
     public void SetLight()
     {
