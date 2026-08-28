@@ -1974,6 +1974,51 @@ MonoBehaviour:
   slotIndex: 1
   cardPlayManager: {fileID: 1761293250}
   highlight: {fileID: 947026656}
+--- !u!1 &677039760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 677039761}
+  - component: {fileID: 677039762}
+  m_Layer: 0
+  m_Name: BattleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &677039761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677039760}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1447904516}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &677039762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677039760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1180b04115ce2c4469da9f1d8428078f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleManager
+  turnManager: {fileID: 1782060066}
 --- !u!1 &687335672
 GameObject:
   m_ObjectHideFlags: 0
@@ -3804,8 +3849,8 @@ RectTransform:
   - {fileID: 1499296528}
   - {fileID: 687335673}
   - {fileID: 1738075677}
-  - {fileID: 255958155}
   - {fileID: 579134952}
+  - {fileID: 255958155}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3845,6 +3890,7 @@ Transform:
   - {fileID: 430911461}
   - {fileID: 1782060067}
   - {fileID: 1761293249}
+  - {fileID: 677039761}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1497644157
@@ -4062,6 +4108,9 @@ MonoBehaviour:
   - {fileID: 2008213794}
   - {fileID: 1332902440}
   unitBoardPrefab: {fileID: 5206675784928235683, guid: 521a5a57520d12e42823c478811c27da, type: 3}
+  cardPreviewRoot: {fileID: 255958156}
+  ownerPlayer: {fileID: 2017280151}
+  battleManager: {fileID: 677039762}
 --- !u!1 &1555267634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4340,6 +4389,9 @@ MonoBehaviour:
   - {fileID: 1273437233}
   - {fileID: 383211420}
   unitBoardPrefab: {fileID: 5206675784928235683, guid: 521a5a57520d12e42823c478811c27da, type: 3}
+  cardPreviewRoot: {fileID: 255958156}
+  ownerPlayer: {fileID: 378847105}
+  battleManager: {fileID: 677039762}
 --- !u!1 &1705878970
 GameObject:
   m_ObjectHideFlags: 0
