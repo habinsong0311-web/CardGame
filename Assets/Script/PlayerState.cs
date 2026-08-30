@@ -75,7 +75,8 @@ public class PlayerState : MonoBehaviour
             return;
         }
         currentHealth -= damage;
-        if(!IsAlive)
+        healthText.text = currentHealth.ToString();
+        if (!IsAlive)
         {
             Debug.Log($"{playerName}이 패배했습니다.");
         }

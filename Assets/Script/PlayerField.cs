@@ -87,4 +87,14 @@ public class PlayerField : MonoBehaviour
             fieldSlot.HideHighlight();
         }
     }
+    public void ResetAllUnitsAttack()
+    {
+        foreach (UnitBoardCardView unit in units)
+        {
+            if (unit != null)
+            {
+                unit.ResetAttack();
+            }
+        }
+    }
 }

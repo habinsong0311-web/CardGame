@@ -33,4 +33,25 @@ public class UnitBoardCardView : MonoBehaviour
         attackText.text = currentAttack.ToString();
         healthText.text = currentHealth.ToString();
     }
+    public void TakeDamage(int damage)
+    {
+        if (damage <= 0)
+        {
+            return;
+        }
+        currentHealth -= damage;
+        healthText.text = currentHealth.ToString();
+        if (currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+    public void UseAttack()
+    {
+        canAttack = false;
+    }
+    public void ResetAttack()
+    {
+        canAttack = true;
+    }
 }

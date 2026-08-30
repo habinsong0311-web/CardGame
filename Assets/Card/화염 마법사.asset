@@ -18,7 +18,7 @@ MonoBehaviour:
   cardName: "\uD654\uC5FC \uB9C8\uBC95\uC0AC"
   cost: 3
   attack: 3
-  maxHealth: 0
+  maxHealth: 3
   effectValue: 0
   explanation: 
   keywords: 01000000

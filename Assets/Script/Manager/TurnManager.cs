@@ -35,6 +35,7 @@ public class TurnManager : MonoBehaviour
         }
         currentPlayer.Hand.AddCard(drawnCard);
         currentPlayer.LightInitialize();// 빛 초기화(턴마다 하나씩 늘어나는거)
+        currentPlayer.Field.ResetAllUnitsAttack();
 
 
     }
