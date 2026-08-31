@@ -11,6 +11,9 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private CardPlayManager cardPlayManager;
     [SerializeField] private BattleManager battleManager;
     [SerializeField] private GameManager gameManager;
+    [Header("AI")]
+    [SerializeField] private PlayerState aiPlayer;
+    [SerializeField] private SimpleAI simpleAI;
 
 
     public void StartGame()
@@ -43,7 +46,10 @@ public class TurnManager : MonoBehaviour
         currentPlayer.Hand.AddCard(drawnCard);
         currentPlayer.LightInitialize();// 빛 초기화(턴마다 하나씩 늘어나는거)
         currentPlayer.Field.ResetAllUnitsAttack();
-
+        if (currentPlayer == aiPlayer)
+        {
+            simpleAI.StartAITurn();
+        }
 
     }
     public void EndTurn()
