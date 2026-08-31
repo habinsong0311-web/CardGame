@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 650ab5c76b5cbef4da0b5e38dbe31689, type: 3}
   m_Name: "\uCE58\uC720\uC0AC\uC81C"
   m_EditorClassIdentifier: Assembly-CSharp::CardSetting
-  cardId: 004
+  cardId: U004
   artwork: {fileID: -6105913594851492561, guid: 98244d261d2ad0941bda98dba16f00ff, type: 3}
   cardType: 0
   cardName: "\uCE58\uC720 \uC0AC\uC81C"

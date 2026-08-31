@@ -29,7 +29,7 @@ public class CardView : MonoBehaviour
         costText.text = cardSetting.Cost.ToString();
         attackText.text = cardSetting.Attack.ToString();
         healthText.text = cardSetting.MaxHealth.ToString();
-        explanationText.text = cardSetting.Explanation;
+        explanationText.text = cardSetting.Explanation.Replace("{Value}", cardSetting.EffectValue.ToString());
         keywordText.text = string.Join(", ", cardSetting.Keywords);
 
     }

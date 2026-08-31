@@ -1,20 +1,23 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerField : MonoBehaviour
 {
-    
+
     [Header("필드 슬롯")]
     [SerializeField] private Transform[] slots;
     [SerializeField] private FieldSlot[] fieldSlots;
     [Header("필드 유닛 프리팹")]
     [SerializeField] private UnitBoardCardView unitBoardPrefab;
     private UnitBoardCardView[] units;
+    public IReadOnlyList<UnitBoardCardView> Units => units;
     [Header("카드 미리보기")]
     [SerializeField] private CardPreviewRoot cardPreviewRoot;
     [Header("필드 소유자")]
     [SerializeField] private PlayerState ownerPlayer;
     [Header("연결")]
     [SerializeField] private BattleManager battleManager;
+    [SerializeField] private CardPlayManager cardPlayManager;
     private void Awake()
     {
         units = new UnitBoardCardView[slots.Length];
@@ -26,6 +29,17 @@ public class PlayerField : MonoBehaviour
             return false;
         }
         return units[slotIndex] == null;
+    }
+    public int FindEmptySlot()
+    {// 비어있는 슬롯 찾기
+        for (int i = 0; i < units.Length; i++)
+        {
+            if (IsSlotEmpty(i))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
     public bool Summon(CardSetting card, int slotIndex)
     {
@@ -48,7 +62,7 @@ public class PlayerField : MonoBehaviour
         UnitSelect unitSelect = unit.GetComponent<UnitSelect>();
         if (unitSelect != null)
         {
-            unitSelect.Setup(unit, battleManager);
+            unitSelect.Setup(unit, battleManager, cardPlayManager);
         }//카드 선택 기능에서 사용
         units[slotIndex] = unit;
         CardPreview cardPreview =unit.GetComponent<CardPreview>();

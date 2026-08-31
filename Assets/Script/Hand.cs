@@ -15,6 +15,8 @@ public class Hand : MonoBehaviour
     private List<CardSetting> cards = new List<CardSetting>();
     public int cardCount => cards.Count;
 
+    public IReadOnlyList<CardSetting> Cards => cards;
+
     [Header("카드 화면")]
     [SerializeField] private CardView unitCardPrefab;
     [SerializeField] private CardView skillCardPrefab;
@@ -54,6 +56,19 @@ public class Hand : MonoBehaviour
         }
         cards.Remove(card);
         Destroy(cardView.gameObject);
+    }
+    public CardView FindCardView(CardSetting card)
+    {
+        foreach (Transform child in transform)
+        {
+            CardView cardView = child.GetComponent<CardView>();
+
+            if (cardView != null && cardView.CardSetting == card)
+            {
+                return cardView;
+            }
+        }
+        return null;
     }
     private void CreateCardView(CardSetting card)
     {

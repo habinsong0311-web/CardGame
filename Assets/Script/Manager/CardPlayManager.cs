@@ -9,6 +9,7 @@ public class CardPlayManager : MonoBehaviour
     private CardSetting selectedCard;
     private CardView selectedCardView;
     private Hand selectedHand;
+
     public void SelectCard(CardSetting card, CardView cardView, Hand hand)
     {
         if (gameManager.IsGameOver)
@@ -45,6 +46,7 @@ public class CardPlayManager : MonoBehaviour
         }
         Debug.Log($"{selectedCard.CardName} 카드를 선택했습니다.");
     }
+    public bool IsSkillSelected => selectedCard != null && selectedCard.CardType == CardType.Skill;
     public void TrySummon(PlayerState player, int slotIndex)
     {
         if (gameManager.IsGameOver)
@@ -99,5 +101,87 @@ public class CardPlayManager : MonoBehaviour
         selectedCard = null;
         selectedCardView = null;
         selectedHand = null;
+    }
+    public void TryUseSkill(UnitBoardCardView target)
+    {
+        if (gameManager.IsGameOver)
+            return;
+        if (selectedCard == null || selectedHand == null || target == null)
+            return;
+        if (selectedCard.CardType != CardType.Skill)
+        {
+            Debug.Log("마법 카드가 아닙니다.");
+            return;
+        }
+        PlayerState player = selectedHand.Player;
+        if (!turnManager.IsCurrentPlayer(player))
+        {
+            Debug.Log("현재 자신의 턴이 아닙니다.");
+            return;
+        }
+        if (player.CurrentLight < selectedCard.Cost)
+        {
+            Debug.Log("빛이 부족합니다.");
+            return;
+        }
+        switch (selectedCard.CardId)
+        {
+            case "M002":
+                target.TakeDamage(selectedCard.EffectValue);
+                Debug.Log($"{target.name}에게 화염구를 사용했습니다.");
+                break;
+            case "M001":
+                target.TakeHeal(selectedCard.EffectValue);
+                Debug.Log($"{target.name}에게 치유의 빛을 사용했습니다.");
+                break;
+            default:
+                Debug.Log($"등록되지 않은 마법입니다: {selectedCard.CardId}");
+                return;
+        }
+        player.SpendLight(selectedCard.Cost);
+        selectedHand.RemoveCard(selectedCard,selectedCardView);
+        player.Graveyard.AddCard(selectedCard);
+        ClearSelection();
+    }
+    public void TryUseSkill(PlayerState target)
+    {
+        if (gameManager.IsGameOver)
+            return;
+        if (selectedCard == null || selectedHand == null || target == null)
+            return;
+        if (selectedCard.CardType != CardType.Skill)
+        {
+            Debug.Log("마법 카드가 아닙니다.");
+            return;
+        }
+        PlayerState player = selectedHand.Player;
+        if (!turnManager.IsCurrentPlayer(player))
+        {
+            Debug.Log("현재 자신의 턴이 아닙니다.");
+            return;
+        }
+        if (player.CurrentLight < selectedCard.Cost)
+        {
+            Debug.Log("빛이 부족합니다.");
+            return;
+        }
+        switch (selectedCard.CardId)
+        {
+            case "M002":
+                target.TakeDamage(selectedCard.EffectValue);
+                Debug.Log($"{target.name}에게 화염구를 사용했습니다.");
+                break;
+            case "M001":
+                target.TakeHeal(selectedCard.EffectValue);
+                Debug.Log($"{target.name}에게 치유의 빛을 사용했습니다.");
+                break;
+            default:
+                Debug.Log($"등록되지 않은 마법입니다: {selectedCard.CardId}");
+                return;
+        }
+        player.SpendLight(selectedCard.Cost);
+        selectedHand.RemoveCard(selectedCard, selectedCardView);
+        player.Graveyard.AddCard(selectedCard);
+        ClearSelection();
     }
 }

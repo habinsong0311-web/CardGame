@@ -4,6 +4,10 @@ using UnityEngine.UI;
 
 public class UnitBoardCardView : MonoBehaviour
 {
+    [Header("능력치 색상")]
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private Color increasedColor = Color.green;
+    [SerializeField] private Color decreasedColor = Color.red;
     [Header("카드 정보")]
     [SerializeField] private CardSetting cardSetting;
     [Header("카드 내용")]
@@ -30,8 +34,7 @@ public class UnitBoardCardView : MonoBehaviour
         currentHealth = cardData.MaxHealth;
         currentAttack = cardData.Attack;
         artworkImage.sprite = cardData.Artwork;
-        attackText.text = currentAttack.ToString();
-        healthText.text = currentHealth.ToString();
+        UpdateStatText();
     }
     public void TakeDamage(int damage)
     {
@@ -40,12 +43,21 @@ public class UnitBoardCardView : MonoBehaviour
             return;
         }
         currentHealth -= damage;
-        healthText.text = currentHealth.ToString();
+        UpdateStatText();
         if (currentHealth <= 0)
         {
             ownerPlayer.Graveyard.AddCard(cardSetting);
             Destroy(gameObject);
         }
+    }
+    public void TakeHeal(int effectValue)
+    {
+        if(effectValue <= 0)
+        {
+            return;
+        }
+        currentHealth += effectValue;
+        UpdateStatText();
     }
     public void UseAttack()
     {
@@ -54,5 +66,24 @@ public class UnitBoardCardView : MonoBehaviour
     public void ResetAttack()
     {
         canAttack = true;
+    }
+    private Color GetStatColor(int currentValue,int originalValue)
+    {
+        if (currentValue > originalValue)
+        {
+            return increasedColor;
+        }
+        if (currentValue < originalValue)
+        {
+            return decreasedColor;
+        }
+        return normalColor;
+    }
+    private void UpdateStatText()
+    {
+        attackText.text = currentAttack.ToString();
+        healthText.text = currentHealth.ToString();
+        attackText.color = GetStatColor(currentAttack,cardSetting.Attack);
+        healthText.color = GetStatColor(currentHealth,cardSetting.MaxHealth);
     }
 }

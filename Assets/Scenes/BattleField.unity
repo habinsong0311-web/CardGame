@@ -1155,6 +1155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTarget
   player: {fileID: 378847105}
   battleManager: {fileID: 677039762}
+  cardPlayManager: {fileID: 1761293250}
 --- !u!1 &383211416
 GameObject:
   m_ObjectHideFlags: 0
@@ -4468,6 +4469,7 @@ MonoBehaviour:
   cardPreviewRoot: {fileID: 255958156}
   ownerPlayer: {fileID: 2017280151}
   battleManager: {fileID: 677039762}
+  cardPlayManager: {fileID: 1761293250}
 --- !u!1 &1555267634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4749,6 +4751,7 @@ MonoBehaviour:
   cardPreviewRoot: {fileID: 255958156}
   ownerPlayer: {fileID: 378847105}
   battleManager: {fileID: 677039762}
+  cardPlayManager: {fileID: 1761293250}
 --- !u!1 &1705878970
 GameObject:
   m_ObjectHideFlags: 0
@@ -5272,6 +5275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTarget
   player: {fileID: 2017280151}
   battleManager: {fileID: 677039762}
+  cardPlayManager: {fileID: 1761293250}
 --- !u!114 &2017280153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5285,8 +5289,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleAI
   aiPlayer: {fileID: 2017280151}
+  enemyPlayer: {fileID: 378847105}
   turnManager: {fileID: 1782060066}
   gameManager: {fileID: 430911460}
+  cardPlayManager: {fileID: 1761293250}
+  battleManager: {fileID: 677039762}
   actionDelay: 1
 --- !u!1 &2020760141
 GameObject:

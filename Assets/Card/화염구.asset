@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 650ab5c76b5cbef4da0b5e38dbe31689, type: 3}
   m_Name: "\uD654\uC5FC\uAD6C"
   m_EditorClassIdentifier: Assembly-CSharp::CardSetting
-  cardId: 009
+  cardId: M002
   artwork: {fileID: -6607481912129624618, guid: f8376ca5894547842af837ae1d792cdc, type: 3}
   cardType: 1
   cardName: "\uD654\uC5FC\uAD6C"
@@ -20,6 +20,6 @@ MonoBehaviour:
   attack: 0
   maxHealth: 0
   effectValue: 4
-  explanation: "\uB9CC\uD07C\uC758 \uB300\uBBF8\uC9C0\uB97C \uC8FC\uACE0 \uD654\uC0C1\uC744
+  explanation: "{Value}\uB9CC\uD07C\uC758 \uB300\uBBF8\uC9C0\uB97C \uC8FC\uACE0 \uD654\uC0C1\uC744
     \uBD80\uC5EC"
   keywords: 01000000

@@ -82,5 +82,14 @@ public class PlayerState : MonoBehaviour
             gameManager.EndGame(this);
         }
     }
+    public void TakeHeal(int effectValue)
+    {
+        if (effectValue <= 0)
+        {
+            return;
+        }
+        currentHealth += effectValue;
+        healthText.text = currentHealth.ToString();
+    }
 
 }
