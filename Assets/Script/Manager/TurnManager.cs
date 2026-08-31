@@ -9,6 +9,8 @@ public class TurnManager : MonoBehaviour
 
     [Header("연결")]
     [SerializeField] private CardPlayManager cardPlayManager;
+    [SerializeField] private BattleManager battleManager;
+    [SerializeField] private GameManager gameManager;
 
 
     public void StartGame()
@@ -26,11 +28,16 @@ public class TurnManager : MonoBehaviour
 
     public void StartTurn()
     {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
         Debug.Log($"{currentPlayer.PlayerName}의 턴 시작");
         CardSetting drawnCard = currentPlayer.Deck.DrawCard();
         if (drawnCard == null)
         {
-            Debug.Log($"{currentPlayer.PlayerName}의 덱에 카드가 없습니다.");
+            Debug.Log($"{currentPlayer.PlayerName}의 덱에 카드가 없어 패배했습니다.");
+            gameManager.EndGame(currentPlayer);
             return;
         }
         currentPlayer.Hand.AddCard(drawnCard);
@@ -41,6 +48,11 @@ public class TurnManager : MonoBehaviour
     }
     public void EndTurn()
     {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
+        battleManager.ClearSelection();
         cardPlayManager.ClearSelection();
         if (currentPlayer == player1)
         {

@@ -4,9 +4,14 @@ public class BattleManager : MonoBehaviour
 {
     [Header("연결")]
     [SerializeField] private TurnManager turnManager;
+    [SerializeField] private GameManager gameManager;
     private UnitBoardCardView selectedAttacker;
     public void SelectUnit(UnitBoardCardView unit)
     {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
         if (unit == null)
         {
             return;
@@ -74,6 +79,10 @@ public class BattleManager : MonoBehaviour
     }
     public void AttackPlayer(PlayerState targetPlayer)
     {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
         if (selectedAttacker == null || targetPlayer == null)
         {
             return;
@@ -81,6 +90,11 @@ public class BattleManager : MonoBehaviour
         if (selectedAttacker.OwnerPlayer == targetPlayer)
         {
             Debug.Log("자기 플레이어는 공격할 수 없습니다.");
+            return;
+        }
+        if (targetPlayer.Field.HasAnyUnit())
+        {
+            Debug.Log("상대 필드에 유닛이 있어 플레이어를 공격할 수 없습니다.");
             return;
         }
         if (!selectedAttacker.CanAttack)

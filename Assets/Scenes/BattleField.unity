@@ -620,6 +620,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 202405295}
   m_CullTransparentMesh: 1
+--- !u!1 &207549637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 207549638}
+  - component: {fileID: 207549640}
+  - component: {fileID: 207549639}
+  m_Layer: 5
+  m_Name: Victory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &207549638
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207549637}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 651266667}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1023, y: 537}
+  m_SizeDelta: {x: 900, y: 500}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &207549639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207549637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -7642986446173420197, guid: 5145b9d961ee3e445ab4c9266656543c, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &207549640
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207549637}
+  m_CullTransparentMesh: 1
 --- !u!1 &219032768
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,6 +964,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcedbb81917c04b4987b80914e0e8730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardView
+--- !u!1 &326402481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 326402482}
+  - component: {fileID: 326402484}
+  - component: {fileID: 326402483}
+  m_Layer: 5
+  m_Name: Defeat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &326402482
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326402481}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 651266667}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1023, y: 537}
+  m_SizeDelta: {x: 900, y: 500}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &326402483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326402481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -8048513154784661654, guid: f4c974df6c5b87c438793bfd934c4f11, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &326402484
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326402481}
+  m_CullTransparentMesh: 1
 --- !u!1 &378847101
 GameObject:
   m_ObjectHideFlags: 0
@@ -901,6 +1051,7 @@ GameObject:
   - component: {fileID: 378847104}
   - component: {fileID: 378847103}
   - component: {fileID: 378847105}
+  - component: {fileID: 378847106}
   m_Layer: 5
   m_Name: Player1Hero
   m_TagString: Player
@@ -982,12 +1133,28 @@ MonoBehaviour:
   playerName: Player1
   maxHealth: 30
   healthText: {fileID: 874408955}
+  currentHealth: 0
   maxLight: 0
   lightText: {fileID: 1555267636}
   deck: {fileID: 1705878972}
   hand: {fileID: 1332540954}
   graveyard: {fileID: 687335674}
   field: {fileID: 1676068443}
+  gameManager: {fileID: 430911460}
+--- !u!114 &378847106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378847101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e1f453a8722ed44af9e426da678ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTarget
+  player: {fileID: 378847105}
+  battleManager: {fileID: 677039762}
 --- !u!1 &383211416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,6 +1360,8 @@ MonoBehaviour:
   player2Deck: {fileID: 1499296529}
   player2Hand: {fileID: 2039854602}
   turnManager: {fileID: 1782060066}
+  victoryPanel: {fileID: 207549637}
+  defeatPanel: {fileID: 326402481}
 --- !u!4 &430911461
 Transform:
   m_ObjectHideFlags: 0
@@ -2009,6 +2178,43 @@ MonoBehaviour:
   slotIndex: 1
   cardPlayManager: {fileID: 1761293250}
   highlight: {fileID: 947026656}
+--- !u!1 &651266666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 651266667}
+  m_Layer: 5
+  m_Name: ResultUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &651266667
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651266666}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 326402482}
+  - {fileID: 207549638}
+  m_Father: {fileID: 1445297946}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1023, y: -531}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &677039760
 GameObject:
   m_ObjectHideFlags: 0
@@ -2054,6 +2260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
   turnManager: {fileID: 1782060066}
+  gameManager: {fileID: 430911460}
 --- !u!1 &687335672
 GameObject:
   m_ObjectHideFlags: 0
@@ -4000,6 +4207,7 @@ RectTransform:
   - {fileID: 1738075677}
   - {fileID: 579134952}
   - {fileID: 255958155}
+  - {fileID: 651266667}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4708,6 +4916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardPlayManager
   turnManager: {fileID: 1782060066}
+  gameManager: {fileID: 430911460}
 --- !u!1 &1782060065
 GameObject:
   m_ObjectHideFlags: 0
@@ -4741,6 +4950,8 @@ MonoBehaviour:
   player2: {fileID: 2017280151}
   currentPlayer: {fileID: 0}
   cardPlayManager: {fileID: 1761293250}
+  battleManager: {fileID: 677039762}
+  gameManager: {fileID: 430911460}
 --- !u!4 &1782060067
 Transform:
   m_ObjectHideFlags: 0
@@ -4954,6 +5165,7 @@ GameObject:
   - component: {fileID: 2017280150}
   - component: {fileID: 2017280149}
   - component: {fileID: 2017280151}
+  - component: {fileID: 2017280152}
   m_Layer: 5
   m_Name: Player2Hero
   m_TagString: Player
@@ -5035,12 +5247,28 @@ MonoBehaviour:
   playerName: Player2
   maxHealth: 30
   healthText: {fileID: 1248524793}
+  currentHealth: 0
   maxLight: 0
   lightText: {fileID: 841676324}
   deck: {fileID: 1499296529}
   hand: {fileID: 2039854602}
   graveyard: {fileID: 1738075676}
   field: {fileID: 1505077883}
+  gameManager: {fileID: 430911460}
+--- !u!114 &2017280152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017280147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e1f453a8722ed44af9e426da678ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTarget
+  player: {fileID: 2017280151}
+  battleManager: {fileID: 677039762}
 --- !u!1 &2020760141
 GameObject:
   m_ObjectHideFlags: 0

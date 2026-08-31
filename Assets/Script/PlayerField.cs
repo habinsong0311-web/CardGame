@@ -32,38 +32,37 @@ public class PlayerField : MonoBehaviour
         if (card == null)
         {
             return false;
-        }
+        }//null값 확인
         if (card.CardType != CardType.Unit)
         {
             Debug.Log("유닛 카드만 소환할 수 있습니다.");
             return false;
-        }
+        }//유닛카드인지 확인
         if (!IsSlotEmpty(slotIndex))
         {
             Debug.Log("선택한 슬롯이 비어 있지 않습니다.");
             return false;
-        }
+        }//빈 슬롯인지 확인
         UnitBoardCardView unit = Instantiate(unitBoardPrefab, slots[slotIndex]);
-        unit.Setup(card, ownerPlayer);
+        unit.Setup(card, ownerPlayer);// 정보값을 전달 및 생성
         UnitSelect unitSelect = unit.GetComponent<UnitSelect>();
         if (unitSelect != null)
         {
             unitSelect.Setup(unit, battleManager);
-        }
+        }//카드 선택 기능에서 사용
         units[slotIndex] = unit;
-
         CardPreview cardPreview =unit.GetComponent<CardPreview>();
         if (cardPreview != null)
         {
             cardPreview.Setup(card, cardPreviewRoot);
-        }
+        }//카드 미리보기 기능에서 사용
         RectTransform unitRect = unit.GetComponent<RectTransform>();
         if (unitRect != null)
         {
             unitRect.anchoredPosition = Vector2.zero;
             unitRect.localRotation = Quaternion.identity;
             unitRect.localScale = Vector3.one;
-        }
+        }//카드가 소환될떄 사용
         return true;
     }
     public void ShowAvailableSlots()
@@ -96,5 +95,18 @@ public class PlayerField : MonoBehaviour
                 unit.ResetAttack();
             }
         }
+    }
+    public bool HasAnyUnit()
+    {
+        //필드에 몬스터가 남아있늕 확인하는 함수
+        //필드에 하나라도 몬스터가 존재하면 True
+        foreach (UnitBoardCardView unit in units)
+        {
+            if (unit != null)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

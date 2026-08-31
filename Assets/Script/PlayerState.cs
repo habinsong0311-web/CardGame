@@ -8,7 +8,7 @@ public class PlayerState : MonoBehaviour
     [Header("체력")]
     [SerializeField, Min(1)]private int maxHealth = 30;
     [SerializeField] private TMP_Text healthText;
-    private int currentHealth;
+    [SerializeField] private int currentHealth;
     [Header("빛")]
     [SerializeField] private int maxLight = 0;
     private int currentLight;
@@ -17,8 +17,9 @@ public class PlayerState : MonoBehaviour
     [SerializeField] private Deck deck;
     [SerializeField] private Hand hand;
     [SerializeField] private Graveyard graveyard;
-    [Header("필드 연결")]
+    [Header("연결")]
     [SerializeField] private PlayerField field;
+    [SerializeField] private GameManager gameManager;
     public PlayerField Field => field;
 
     public string PlayerName => playerName;
@@ -78,7 +79,7 @@ public class PlayerState : MonoBehaviour
         healthText.text = currentHealth.ToString();
         if (!IsAlive)
         {
-            Debug.Log($"{playerName}이 패배했습니다.");
+            gameManager.EndGame(this);
         }
     }
 

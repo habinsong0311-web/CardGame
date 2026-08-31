@@ -4,12 +4,17 @@ public class CardPlayManager : MonoBehaviour
 {
     [Header("연결")]
     [SerializeField] private TurnManager turnManager;
+    [SerializeField] private GameManager gameManager;
 
     private CardSetting selectedCard;
     private CardView selectedCardView;
     private Hand selectedHand;
     public void SelectCard(CardSetting card, CardView cardView, Hand hand)
     {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
         if (card == null || cardView == null || hand == null)
         {
             return;
@@ -42,6 +47,10 @@ public class CardPlayManager : MonoBehaviour
     }
     public void TrySummon(PlayerState player, int slotIndex)
     {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
         if (selectedCard == null)
         {
             Debug.Log("선택한 카드가 없습니다.");

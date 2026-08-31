@@ -43,6 +43,7 @@ public class UnitBoardCardView : MonoBehaviour
         healthText.text = currentHealth.ToString();
         if (currentHealth <= 0)
         {
+            ownerPlayer.Graveyard.AddCard(cardSetting);
             Destroy(gameObject);
         }
     }
