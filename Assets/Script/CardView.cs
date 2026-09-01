@@ -15,8 +15,16 @@ public class CardView : MonoBehaviour
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text explanationText;
     [SerializeField] private TMP_Text keywordText;
+    [Header("카드 뒷면")]
+    [SerializeField] private GameObject cardBack;
 
-
+    public void SetHidden(bool hidden)
+    {//카드 뒷면
+        if (cardBack != null)
+        {
+            cardBack.SetActive(hidden);
+        }
+    }
     public void Setup(CardSetting cardData)
     {
         if (cardData == null)

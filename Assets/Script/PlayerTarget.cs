@@ -14,6 +14,11 @@ public class PlayerTarget : MonoBehaviour, IPointerClickHandler
         {
             return;
         }
+        if (cardPlayManager.IsSummonEffectTargeting)
+        {
+            cardPlayManager.TryUseSummonEffect(player);
+            return;
+        }
 
         if (cardPlayManager.IsSkillSelected)
         {

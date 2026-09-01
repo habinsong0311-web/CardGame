@@ -21,4 +21,5 @@ MonoBehaviour:
   maxHealth: 3
   effectValue: 0
   explanation: 
-  keywords: 03000000
+  keywords: 
+  hasSummonEffect: 0

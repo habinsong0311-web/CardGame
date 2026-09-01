@@ -632,10 +632,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9208949467948448247, guid: f4c50c3e6338df5419696685ba87fef9, type: 3}
-      propertyPath: m_ShowMaskGraphic
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -654,10 +650,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 304391360}
     m_Modifications:
-    - target: {fileID: 5687466441846136966, guid: eab9dde2ebf1e20479dd252105dad556, type: 3}
-      propertyPath: cardSetting
-      value: 
-      objectReference: {fileID: 11400000, guid: 9f730a644831e0f4c8c5972b5b3de352, type: 2}
     - target: {fileID: 7432027286058868862, guid: eab9dde2ebf1e20479dd252105dad556, type: 3}
       propertyPath: m_Name
       value: UnitCardView

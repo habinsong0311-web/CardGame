@@ -13,6 +13,8 @@ public class Hand : MonoBehaviour
     [Header("손패 설정")]
     private int maxHandSize = 8;
     private List<CardSetting> cards = new List<CardSetting>();
+    [Header("상대 패 설정")]
+    [SerializeField] private bool hideCards;
     public int cardCount => cards.Count;
 
     public IReadOnlyList<CardSetting> Cards => cards;
@@ -86,8 +88,9 @@ public class Hand : MonoBehaviour
             return;
         }
         cardView.Setup(card);
+        cardView.SetHidden(hideCards);
         CardPreview cardPreview = cardView.GetComponent<CardPreview>();
-        if (cardPreview != null)
+        if (cardPreview != null && !hideCards)
         {
             cardPreview.Setup(card, cardPreviewRoot);
         }

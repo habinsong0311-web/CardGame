@@ -3916,6 +3916,7 @@ MonoBehaviour:
   sideCardSpacing: 100
   sideMaxHandWidth: 500
   sideCardScale: 0.4
+  canOpenHand: 0
 --- !u!114 &1332540954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3932,6 +3933,7 @@ MonoBehaviour:
   cardPlayManager: {fileID: 1761293250}
   player: {fileID: 378847105}
   cardPreviewRoot: {fileID: 255958156}
+  hideCards: 0
   unitCardPrefab: {fileID: 5687466441846136966, guid: eab9dde2ebf1e20479dd252105dad556, type: 3}
   skillCardPrefab: {fileID: 5687466441846136966, guid: f4c50c3e6338df5419696685ba87fef9, type: 3}
 --- !u!1 &1332902436
@@ -5466,6 +5468,7 @@ MonoBehaviour:
   cardPlayManager: {fileID: 1761293250}
   player: {fileID: 2017280151}
   cardPreviewRoot: {fileID: 255958156}
+  hideCards: 1
   unitCardPrefab: {fileID: 5687466441846136966, guid: eab9dde2ebf1e20479dd252105dad556, type: 3}
   skillCardPrefab: {fileID: 5687466441846136966, guid: f4c50c3e6338df5419696685ba87fef9, type: 3}
 --- !u!224 &2039854603
@@ -5509,6 +5512,7 @@ MonoBehaviour:
   sideCardSpacing: 100
   sideMaxHandWidth: 500
   sideCardScale: 0.4
+  canOpenHand: 1
 --- !u!1 &2074129039 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7432027286058868862, guid: eab9dde2ebf1e20479dd252105dad556, type: 3}

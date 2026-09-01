@@ -60,6 +60,7 @@ public class TurnManager : MonoBehaviour
         }
         battleManager.ClearSelection();
         cardPlayManager.ClearSelection();
+        currentPlayer.Field.DisableAllUnitsAttack();
         if (currentPlayer == player1)
         {
             currentPlayer = player2;
@@ -74,6 +75,15 @@ public class TurnManager : MonoBehaviour
     {
         //턴을 확인하는 함수
         return currentPlayer == player;
+    }
+    public PlayerState GetOpponent(PlayerState player)
+    {// 누구의 턴인지 확인하는거
+        if (player == player1)
+        {
+            return player2;
+        }
+
+        return player1;
     }
 
 }

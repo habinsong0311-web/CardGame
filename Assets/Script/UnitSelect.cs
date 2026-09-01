@@ -18,7 +18,11 @@ public class UnitSelect :MonoBehaviour, IPointerClickHandler
         {
             return;
         }
-
+        if (cardPlayManager.IsSummonEffectTargeting)
+        {
+            cardPlayManager.TryUseSummonEffect(unit);
+            return;
+        }
         if (cardPlayManager.IsSkillSelected)
         {
             cardPlayManager.TryUseSkill(unit);

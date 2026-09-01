@@ -110,6 +110,16 @@ public class PlayerField : MonoBehaviour
             }
         }
     }
+    public void DisableAllUnitsAttack()
+    {
+        foreach (UnitBoardCardView unit in units)
+        {
+            if (unit != null)
+            {
+                unit.UseAttack();
+            }
+        }
+    }
     public bool HasAnyUnit()
     {
         //필드에 몬스터가 남아있늕 확인하는 함수
@@ -117,6 +127,17 @@ public class PlayerField : MonoBehaviour
         foreach (UnitBoardCardView unit in units)
         {
             if (unit != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasTauntUnit()
+    {
+        foreach (UnitBoardCardView unit in units)
+        {
+            if (unit != null && unit.HasTaunt)
             {
                 return true;
             }

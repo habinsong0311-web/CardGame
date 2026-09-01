@@ -19,6 +19,7 @@ MonoBehaviour:
   cost: 3
   attack: 3
   maxHealth: 3
-  effectValue: 0
-  explanation: 
-  keywords: 01000000
+  effectValue: 2
+  explanation: "\uC18C\uD658\uC2DC {Value}\uB9CC\uD07C \uD53C\uD574\uB97C \uC900\uB2E4"
+  keywords: 
+  hasSummonEffect: 1

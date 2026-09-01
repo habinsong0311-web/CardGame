@@ -6,10 +6,12 @@ public class CardPlayManager : MonoBehaviour
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private GameManager gameManager;
 
+
     private CardSetting selectedCard;
     private CardView selectedCardView;
     private Hand selectedHand;
-
+    private CardSetting pendingSummonEffect;
+    public bool IsSummonEffectTargeting => pendingSummonEffect != null;
     public void SelectCard(CardSetting card, CardView cardView, Hand hand)
     {
         if (gameManager.IsGameOver)
@@ -88,6 +90,11 @@ public class CardPlayManager : MonoBehaviour
         {
             return;
         }
+        if (selectedCard.HasSummonEffect)
+        {
+            pendingSummonEffect = selectedCard;
+            Debug.Log($"{selectedCard.CardName}의 효과를 적용할 대상을 선택하세요.");
+        }
         player.SpendLight(selectedCard.Cost);
         selectedHand.RemoveCard(selectedCard, selectedCardView);
         ClearSelection();
@@ -102,8 +109,58 @@ public class CardPlayManager : MonoBehaviour
         selectedCardView = null;
         selectedHand = null;
     }
-    public void TryUseSkill(UnitBoardCardView target)
+    public void TryUseSummonEffect(UnitBoardCardView target)
     {
+        if (gameManager.IsGameOver)
+            return;
+
+        if (pendingSummonEffect == null || target == null)
+            return;
+
+        switch (pendingSummonEffect.CardId)
+        {
+            case "U006":
+                target.TakeDamage(pendingSummonEffect.EffectValue);
+                Debug.Log($"{target.name}에게 피해를 {pendingSummonEffect.EffectValue} 줬습니다.");
+                break;
+
+            case "U004":
+                target.TakeHeal(pendingSummonEffect.EffectValue);
+                Debug.Log($"{target.name}을 {pendingSummonEffect.EffectValue}만큼 회복했습니다.");
+                break;
+
+            default:
+                Debug.Log($"등록되지 않은 소환 효과입니다: {pendingSummonEffect.CardId}");
+                return;
+        }
+
+        ClearSummonEffect();
+    }
+    public void TryUseSummonEffect(PlayerState target)
+    {
+        if (gameManager.IsGameOver)
+            return;
+        if (pendingSummonEffect == null || target == null)
+            return;
+        switch (pendingSummonEffect.CardId)
+        {
+            case "U006":
+                target.TakeDamage(pendingSummonEffect.EffectValue);
+                Debug.Log($"{target.PlayerName}에게 피해를 {pendingSummonEffect.EffectValue} 줬습니다.");
+                break;
+            case "U004":
+                target.TakeHeal(pendingSummonEffect.EffectValue);
+                Debug.Log($"{target.PlayerName}을 {pendingSummonEffect.EffectValue}만큼 회복했습니다.");
+                break;
+            default:
+                Debug.Log($"등록되지 않은 소환 효과입니다: {pendingSummonEffect.CardId}");
+                return;
+        }
+
+        ClearSummonEffect();
+    }
+    public void TryUseSkill(UnitBoardCardView target)
+    {//유닛에게 스킬을 사용하는 함수
         if (gameManager.IsGameOver)
             return;
         if (selectedCard == null || selectedHand == null || target == null)
@@ -128,11 +185,9 @@ public class CardPlayManager : MonoBehaviour
         {
             case "M002":
                 target.TakeDamage(selectedCard.EffectValue);
-                Debug.Log($"{target.name}에게 화염구를 사용했습니다.");
                 break;
             case "M001":
                 target.TakeHeal(selectedCard.EffectValue);
-                Debug.Log($"{target.name}에게 치유의 빛을 사용했습니다.");
                 break;
             default:
                 Debug.Log($"등록되지 않은 마법입니다: {selectedCard.CardId}");
@@ -143,8 +198,9 @@ public class CardPlayManager : MonoBehaviour
         player.Graveyard.AddCard(selectedCard);
         ClearSelection();
     }
+
     public void TryUseSkill(PlayerState target)
-    {
+    {//영웅에게 스킬 사용함수
         if (gameManager.IsGameOver)
             return;
         if (selectedCard == null || selectedHand == null || target == null)
@@ -169,7 +225,6 @@ public class CardPlayManager : MonoBehaviour
         {
             case "M002":
                 target.TakeDamage(selectedCard.EffectValue);
-                Debug.Log($"{target.name}에게 화염구를 사용했습니다.");
                 break;
             case "M001":
                 target.TakeHeal(selectedCard.EffectValue);
@@ -183,5 +238,9 @@ public class CardPlayManager : MonoBehaviour
         selectedHand.RemoveCard(selectedCard, selectedCardView);
         player.Graveyard.AddCard(selectedCard);
         ClearSelection();
+    }
+    private void ClearSummonEffect()
+    {
+        pendingSummonEffect = null;
     }
 }

@@ -19,6 +19,8 @@ public class HandLayout : MonoBehaviour
     [SerializeField] private float sideMaxHandWidth = 500f; //폭
     [Header("카드 크기")]
     [SerializeField] private float sideCardScale = 0.4f; // 카드 사이즈
+    [Header("패 열기 설정")]
+    [SerializeField] private bool canOpenHand;
 
 
     public void SideHandLayout()
@@ -106,6 +108,8 @@ public class HandLayout : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
+            if(canOpenHand)
+                return;
             if(isOpened == true)
             {
                 isOpened = false;

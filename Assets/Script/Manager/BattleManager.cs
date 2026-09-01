@@ -16,6 +16,12 @@ public class BattleManager : MonoBehaviour
         {
             return;
         }
+        if (selectedAttacker == unit)
+        {//다시한번 누르면 공격 취소
+            ClearSelection();
+            Debug.Log("공격자 선택을 취소했습니다.");
+            return;
+        }
         // 공격자가 아직 없으면 공격자로 선택
         if (selectedAttacker == null)
         {
@@ -63,6 +69,11 @@ public class BattleManager : MonoBehaviour
         {
             Debug.Log("이 유닛은 현재 공격할 수 없습니다.");
             ClearSelection();
+            return;
+        }
+        if (target.OwnerPlayer.Field.HasTauntUnit() && !target.HasTaunt)
+        {
+            Debug.Log("도발 유닛을 먼저 공격해야 합니다.");
             return;
         }
         int attackerDamage = selectedAttacker.CurrentAttack;

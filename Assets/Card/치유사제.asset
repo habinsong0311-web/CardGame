@@ -19,7 +19,8 @@ MonoBehaviour:
   cost: 2
   attack: 2
   maxHealth: 3
-  effectValue: 0
-  explanation: "\uCC44\uB825\uC744 \uCE90\uB9AD\uD130\uC758 \uCCB4\uB825\uB9CC\uD07C
+  effectValue: 2
+  explanation: "{Value}\uCC44\uB825\uC744 \uCE90\uB9AD\uD130\uC758 \uCCB4\uB825\uB9CC\uD07C
     \uD68C\uBCF5\uD55C\uB2E4"
   keywords: 
+  hasSummonEffect: 1
