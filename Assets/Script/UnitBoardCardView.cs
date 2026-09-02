@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DamageNumbersPro;
 
 public class UnitBoardCardView : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class UnitBoardCardView : MonoBehaviour
     [SerializeField] private Image unitFrame;
     [SerializeField] private Color normalFrameColor = Color.white;
     [SerializeField] private Color attackReadyColor = Color.green;
+    [SerializeField] private Color selectedFrameColor = Color.yellow;
+    [SerializeField] private Color targetableColor = Color.cyan;
     [Header("능력치 색상")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color increasedColor = Color.green;
@@ -19,9 +22,17 @@ public class UnitBoardCardView : MonoBehaviour
     [SerializeField] private TMP_Text attackText;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private GameObject tauntFrame;
+    [Header("피해 및 회복 UI")]
+    [SerializeField] private DamageNumber damagePopupPrefab;
+    [SerializeField] private DamageNumber healPopupPrefab;
+    private RectTransform unitRect;
+    private RectTransform popupRoot;
+
     private int currentAttack;
     private int currentHealth;
     private bool canAttack;
+    private bool isSelected;
+    private bool isTargetable;
     private PlayerState ownerPlayer;
     public PlayerState OwnerPlayer => ownerPlayer;
     public int CurrentAttack => currentAttack;
@@ -34,6 +45,12 @@ public class UnitBoardCardView : MonoBehaviour
         {
             return;
         }
+        unitRect = GetComponent<RectTransform>();
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            popupRoot = canvas.GetComponent<RectTransform>();
+        }
         ownerPlayer = player;
         cardSetting = cardData;
         if (tauntFrame != null)
@@ -41,21 +58,37 @@ public class UnitBoardCardView : MonoBehaviour
             tauntFrame.SetActive(cardData.HasKeyword(KeyWord.도발));
         }//도발이있으면 것에 프레임 보임
         canAttack = cardData.HasKeyword(KeyWord.돌진);//돌진 키워드가 있으면 바로 공격할수있음
-        UpdateAttackReadyUI();
+        UpdateFrameColor();
         currentHealth = cardData.MaxHealth;
         currentAttack = cardData.Attack;
         artworkImage.sprite = cardData.Artwork;
         UpdateStatText();
     }
-    private void UpdateAttackReadyUI()
+    private void UpdateFrameColor()
     {
         if (unitFrame == null)
             return;
 
-        if (canAttack)
+        if (isSelected)
+            unitFrame.color = selectedFrameColor;
+        else if (isTargetable)
+        {
+            unitFrame.color = targetableColor;
+        }
+        else if (canAttack)
             unitFrame.color = attackReadyColor;
         else
             unitFrame.color = normalFrameColor;
+    }
+    public void SetTargetable(bool targetable)
+    {
+        isTargetable = targetable;
+        UpdateFrameColor();
+    }
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
+        UpdateFrameColor();
     }
     public void TakeDamage(int damage)
     {
@@ -64,6 +97,7 @@ public class UnitBoardCardView : MonoBehaviour
             return;
         }
         currentHealth -= damage;
+        ShowDamageNumber(damage);
         UpdateStatText();
         if (currentHealth <= 0)
         {
@@ -78,17 +112,18 @@ public class UnitBoardCardView : MonoBehaviour
             return;
         }
         currentHealth += effectValue;
+        ShowHealNumber(effectValue);
         UpdateStatText();
     }
     public void UseAttack()
     {
         canAttack = false;
-        UpdateAttackReadyUI();
+        UpdateFrameColor();
     }
     public void ResetAttack()
     {
         canAttack = true;
-        UpdateAttackReadyUI();
+        UpdateFrameColor();
     }
     private Color GetStatColor(int currentValue,int originalValue)
     {
@@ -108,5 +143,17 @@ public class UnitBoardCardView : MonoBehaviour
         healthText.text = currentHealth.ToString();
         attackText.color = GetStatColor(currentAttack,cardSetting.Attack);
         healthText.color = GetStatColor(currentHealth,cardSetting.MaxHealth);
+    }
+    private void ShowDamageNumber(int damage)
+    {
+        if (damagePopupPrefab == null || popupRoot == null || unitRect == null)
+            return;
+        damagePopupPrefab.SpawnGUI(popupRoot,unitRect,Vector2.zero,damage);
+    }
+    private void ShowHealNumber(int heal)
+    {
+        if (healPopupPrefab == null || popupRoot == null || unitRect == null)
+            return;
+        healPopupPrefab.SpawnGUI(popupRoot,unitRect,Vector2.zero,heal);
     }
 }

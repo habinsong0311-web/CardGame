@@ -5,6 +5,7 @@ public class BattleManager : MonoBehaviour
     [Header("연결")]
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private CardPlayManager cardPlayManager;
     private UnitBoardCardView selectedAttacker;
     public void SelectUnit(UnitBoardCardView unit)
     {
@@ -25,6 +26,7 @@ public class BattleManager : MonoBehaviour
         // 공격자가 아직 없으면 공격자로 선택
         if (selectedAttacker == null)
         {
+            cardPlayManager.ClearSelection();
             SelectAttacker(unit);
             return;
         }
@@ -46,6 +48,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
         selectedAttacker = unit;
+        selectedAttacker.SetSelected(true);
         Debug.Log($"{unit.name}을 공격자로 선택했습니다.");
     }
 
@@ -124,6 +127,10 @@ public class BattleManager : MonoBehaviour
     }
     public void ClearSelection()
     {
+        if (selectedAttacker != null)
+        {
+            selectedAttacker.SetSelected(false);
+        }
         selectedAttacker = null;
     }
 

@@ -19,10 +19,10 @@ public class SimpleAI : MonoBehaviour
     private void AddSummonActions(List<AIAction> actions)
     {
         int emptySlot = aiPlayer.Field.FindEmptySlot();
-        if (emptySlot == -1)
+        if (emptySlot == -1)//비어있는 필드 찾기
             return;
         foreach (CardSetting card in aiPlayer.Hand.Cards)
-        {
+        {//패 확인
             if (card.CardType != CardType.Unit)
                 continue;
             if (card.Cost > aiPlayer.CurrentLight)
@@ -31,8 +31,9 @@ public class SimpleAI : MonoBehaviour
             if (cardView == null)
                 continue;
             int score = card.Attack * 2 + card.MaxHealth - card.Cost;
+            //점수 계산
             if (card.HasSummonEffect)
-            {
+            {//소환효과있는지 확인하고 있으면 효과발동
                 AddSummonEffectActions(actions, card, cardView, emptySlot, score);
                 continue;
             }

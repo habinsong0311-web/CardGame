@@ -144,4 +144,24 @@ public class PlayerField : MonoBehaviour
         }
         return false;
     }
+    public void ShowAllUnitTargets()
+    {
+        foreach (UnitBoardCardView unit in units)
+        {
+            if (unit != null)
+            {
+                unit.SetTargetable(true);
+            }
+        }
+    }
+    public void HideAllUnitTargets()
+    {
+        foreach (UnitBoardCardView unit in units)
+        {
+            if (unit != null)
+            {
+                unit.SetTargetable(false);
+            }
+        }
+    }
 }

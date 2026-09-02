@@ -1,4 +1,6 @@
 using UnityEngine;
+using TMPro;
+using System.Collections;
 
 public class TurnManager : MonoBehaviour
 {
@@ -11,9 +13,17 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private CardPlayManager cardPlayManager;
     [SerializeField] private BattleManager battleManager;
     [SerializeField] private GameManager gameManager;
+    [Header("턴 UI")]
+    [SerializeField] private TMP_Text turnCountText;
+    [SerializeField] private GameObject myTurnBanner;
+    [SerializeField] private GameObject endTurnButton;
+    [SerializeField] private GameObject opponentsTurn;
+    private int turnCount;
+    private Coroutine myTurnBannerCoroutine;
     [Header("AI")]
     [SerializeField] private PlayerState aiPlayer;
     [SerializeField] private SimpleAI simpleAI;
+
 
 
     public void StartGame()
@@ -22,10 +32,10 @@ public class TurnManager : MonoBehaviour
         StartTurn();
     }
     public void Update()
-    {
+    {//테스트
         if (Input.GetKeyDown(KeyCode.T))
         {
-            EndTurn();
+            OnClickEndTurn();
         }
     }
 
@@ -35,6 +45,7 @@ public class TurnManager : MonoBehaviour
         {
             return;
         }
+        UpdateTurnUI();
         Debug.Log($"{currentPlayer.PlayerName}의 턴 시작");
         CardSetting drawnCard = currentPlayer.Deck.DrawCard();
         if (drawnCard == null)
@@ -85,5 +96,61 @@ public class TurnManager : MonoBehaviour
 
         return player1;
     }
+    private void UpdateTurnUI()
+    {
+        bool isPlayerTurn = currentPlayer != aiPlayer;
+        if (endTurnButton != null)
+        {
+            endTurnButton.SetActive(isPlayerTurn);
+        }
+        if (opponentsTurn != null)
+        {
+            opponentsTurn.SetActive(!isPlayerTurn);
+        }
+        // AI 턴이면 턴 수를 올리지 않음
+        if (currentPlayer == aiPlayer)
+        {
+            if (myTurnBannerCoroutine != null)
+            {
+                StopCoroutine(myTurnBannerCoroutine);
+                myTurnBannerCoroutine = null;
+            }
+            myTurnBanner.SetActive(false);
+            return;
+        }
+        // 여기부터는 내 턴일 때만 실행
+        turnCount++;
 
+        if (turnCountText != null)
+        {
+            turnCountText.text = $"TURN : {turnCount}";
+        }
+
+        if (myTurnBannerCoroutine != null)
+        {
+            StopCoroutine(myTurnBannerCoroutine);
+        }
+
+        myTurnBannerCoroutine =StartCoroutine(ShowMyTurnBanner());
+    }
+    private IEnumerator ShowMyTurnBanner()
+    {
+        myTurnBanner.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        myTurnBanner.SetActive(false);
+        myTurnBannerCoroutine = null;
+    }
+    public void OnClickEndTurn()
+    {
+        if (gameManager.IsGameOver)
+        {
+            return;
+        }
+        if (currentPlayer == aiPlayer)
+        {
+            Debug.Log("상대 턴에는 턴을 종료할 수 없습니다.");
+            return;
+        }
+        EndTurn();
+    }
 }

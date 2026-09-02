@@ -20,5 +20,6 @@ MonoBehaviour:
   attack: 0
   maxHealth: 0
   effectValue: 4
-  explanation: "{Value}\uB9CC\uD07C \uD68C\uBCF5\uD55C\uB2E4"
+  explanation: "\uCE90\uB9AD\uD130\uC758 \uCCB4\uB825{Value}\uB9CC\uD07C \uD68C\uBCF5\uD55C\uB2E4"
   keywords: 
+  hasSummonEffect: 0

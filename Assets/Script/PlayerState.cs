@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using DamageNumbersPro;
 
 public class PlayerState : MonoBehaviour
 {
@@ -17,6 +18,12 @@ public class PlayerState : MonoBehaviour
     [SerializeField] private Deck deck;
     [SerializeField] private Hand hand;
     [SerializeField] private Graveyard graveyard;
+    [Header("피해 및 회복 UI")]
+    [SerializeField] private DamageNumber damagePopupPrefab;
+    [SerializeField] private DamageNumber healPopupPrefab;
+
+    private RectTransform heroRect;
+    private RectTransform popupRoot;
     [Header("연결")]
     [SerializeField] private PlayerField field;
     [SerializeField] private GameManager gameManager;
@@ -33,6 +40,12 @@ public class PlayerState : MonoBehaviour
 
     public void Initialize()
     {
+        heroRect = GetComponent<RectTransform>();
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            popupRoot = canvas.GetComponent<RectTransform>();
+        }
         currentHealth = maxHealth;
         healthText.text = currentHealth.ToString();
         UpdateLightText();
@@ -76,6 +89,7 @@ public class PlayerState : MonoBehaviour
             return;
         }
         currentHealth -= damage;
+        ShowDamageNumber(damage);
         healthText.text = currentHealth.ToString();
         if (!IsAlive)
         {
@@ -89,7 +103,20 @@ public class PlayerState : MonoBehaviour
             return;
         }
         currentHealth += effectValue;
+        ShowHealNumber(effectValue);
         healthText.text = currentHealth.ToString();
+    }
+    private void ShowDamageNumber(int damage)
+    {
+        if (damagePopupPrefab == null || popupRoot == null || heroRect == null)
+            return;
+        damagePopupPrefab.SpawnGUI(popupRoot, heroRect, Vector2.zero, damage);
+    }
+    private void ShowHealNumber(int heal)
+    {
+        if (healPopupPrefab == null || popupRoot == null || heroRect == null)
+            return;
+        healPopupPrefab.SpawnGUI(popupRoot, heroRect, Vector2.zero, heal);
     }
 
 }

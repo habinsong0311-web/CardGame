@@ -5,6 +5,7 @@ public class CardPlayManager : MonoBehaviour
     [Header("연결")]
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private BattleManager battleManager;
 
 
     private CardSetting selectedCard;
@@ -20,6 +21,12 @@ public class CardPlayManager : MonoBehaviour
         }
         if (card == null || cardView == null || hand == null)
         {
+            return;
+        }
+        if (selectedCardView == cardView)
+        {
+            ClearSelection();
+            Debug.Log("카드 선택을 취소했습니다.");
             return;
         }
         PlayerState Player = hand.Player;
@@ -38,13 +45,23 @@ public class CardPlayManager : MonoBehaviour
             Debug.Log("빛이 부족해서 선택할 수 없습니다.");
             return;
         }
-
+        if (selectedCardView != null)
+        {
+            selectedCardView.SetSelected(false);
+        }
+        battleManager.ClearSelection();
+        ClearSelection();
         selectedCard = card;
         selectedCardView = cardView;
         selectedHand = hand;
+        selectedCardView.SetSelected(true);
         if (selectedCard.CardType == CardType.Unit)
         {
             selectedHand.Player.Field.ShowAvailableSlots();
+        }
+        else if (selectedCard.CardType == CardType.Skill)
+        {
+            ShowAllUnitTargets();
         }
         Debug.Log($"{selectedCard.CardName} 카드를 선택했습니다.");
     }
@@ -93,6 +110,7 @@ public class CardPlayManager : MonoBehaviour
         if (selectedCard.HasSummonEffect)
         {
             pendingSummonEffect = selectedCard;
+            ShowAllUnitTargets();
             Debug.Log($"{selectedCard.CardName}의 효과를 적용할 대상을 선택하세요.");
         }
         player.SpendLight(selectedCard.Cost);
@@ -101,13 +119,37 @@ public class CardPlayManager : MonoBehaviour
     }
     public void ClearSelection()
     {
+        if (selectedCardView != null)
+        {
+            selectedCardView.SetSelected(false);
+        }
         if (selectedHand != null)
         {
             selectedHand.Player.Field.HideAllSlots();
         }
+        if (!IsSummonEffectTargeting)
+        {
+            HideAllUnitTargets();
+        }
         selectedCard = null;
         selectedCardView = null;
         selectedHand = null;
+    }
+    private void ShowAllUnitTargets()
+    {
+        PlayerState currentPlayer = turnManager.currentPlayer;
+        PlayerState opponent = turnManager.GetOpponent(currentPlayer);
+
+        currentPlayer.Field.ShowAllUnitTargets();
+        opponent.Field.ShowAllUnitTargets();
+    }
+    private void HideAllUnitTargets()
+    {
+        PlayerState currentPlayer = turnManager.currentPlayer;
+        PlayerState opponent = turnManager.GetOpponent(currentPlayer);
+
+        currentPlayer.Field.HideAllUnitTargets();
+        opponent.Field.HideAllUnitTargets();
     }
     public void TryUseSummonEffect(UnitBoardCardView target)
     {
@@ -242,5 +284,6 @@ public class CardPlayManager : MonoBehaviour
     private void ClearSummonEffect()
     {
         pendingSummonEffect = null;
+        HideAllUnitTargets();
     }
 }
