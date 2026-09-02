@@ -6,12 +6,15 @@ public class CardPlayManager : MonoBehaviour
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private BattleManager battleManager;
-
+    [Header("스킬 연출")]
+    [SerializeField] private SkillEffectView fireballPrefab;
+    [SerializeField] private RectTransform effectRoot;
 
     private CardSetting selectedCard;
     private CardView selectedCardView;
     private Hand selectedHand;
     private CardSetting pendingSummonEffect;
+    private UnitBoardCardView pendingSummonEffectSource;
     public bool IsSummonEffectTargeting => pendingSummonEffect != null;
     public void SelectCard(CardSetting card, CardView cardView, Hand hand)
     {
@@ -110,6 +113,7 @@ public class CardPlayManager : MonoBehaviour
         if (selectedCard.HasSummonEffect)
         {
             pendingSummonEffect = selectedCard;
+            pendingSummonEffectSource = player.Field.GetUnit(slotIndex);
             ShowAllUnitTargets();
             Debug.Log($"{selectedCard.CardName}의 효과를 적용할 대상을 선택하세요.");
         }
@@ -162,8 +166,13 @@ public class CardPlayManager : MonoBehaviour
         switch (pendingSummonEffect.CardId)
         {
             case "U006":
-                target.TakeDamage(pendingSummonEffect.EffectValue);
-                Debug.Log($"{target.name}에게 피해를 {pendingSummonEffect.EffectValue} 줬습니다.");
+                int unitDamage = pendingSummonEffect.EffectValue;
+
+                PlayFireball(pendingSummonEffectSource.UnitRect, target.UnitRect, () =>
+                {
+                    if (target != null)
+                        target.TakeDamage(unitDamage);
+                });
                 break;
 
             case "U004":
@@ -187,8 +196,12 @@ public class CardPlayManager : MonoBehaviour
         switch (pendingSummonEffect.CardId)
         {
             case "U006":
-                target.TakeDamage(pendingSummonEffect.EffectValue);
-                Debug.Log($"{target.PlayerName}에게 피해를 {pendingSummonEffect.EffectValue} 줬습니다.");
+                int playerDamage = pendingSummonEffect.EffectValue;
+                PlayFireball(pendingSummonEffectSource.UnitRect, target.HeroRect, () =>
+                {
+                    if (target != null)
+                        target.TakeDamage(playerDamage);
+                });
                 break;
             case "U004":
                 target.TakeHeal(pendingSummonEffect.EffectValue);
@@ -226,7 +239,13 @@ public class CardPlayManager : MonoBehaviour
         switch (selectedCard.CardId)
         {
             case "M002":
-                target.TakeDamage(selectedCard.EffectValue);
+                int unitDamage = selectedCard.EffectValue;
+
+                PlayFireball(player.HeroRect, target.UnitRect, () =>
+                {
+                    if (target != null)
+                        target.TakeDamage(unitDamage);
+                });
                 break;
             case "M001":
                 target.TakeHeal(selectedCard.EffectValue);
@@ -266,7 +285,13 @@ public class CardPlayManager : MonoBehaviour
         switch (selectedCard.CardId)
         {
             case "M002":
-                target.TakeDamage(selectedCard.EffectValue);
+                int playerDamage = selectedCard.EffectValue;
+
+                PlayFireball(player.HeroRect, target.HeroRect, () =>
+                {
+                    if (target != null)
+                        target.TakeDamage(playerDamage);
+                });
                 break;
             case "M001":
                 target.TakeHeal(selectedCard.EffectValue);
@@ -284,6 +309,18 @@ public class CardPlayManager : MonoBehaviour
     private void ClearSummonEffect()
     {
         pendingSummonEffect = null;
+        pendingSummonEffectSource = null;
         HideAllUnitTargets();
     }
+    private void PlayFireball(RectTransform start, RectTransform target, System.Action onHit)
+    {
+        if (fireballPrefab == null || effectRoot == null)
+        {
+            onHit?.Invoke();
+            return;
+        }
+        SkillEffectView fireball = Instantiate(fireballPrefab, effectRoot);
+        fireball.Play(start, target, onHit);
+    }
+
 }

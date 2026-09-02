@@ -76,8 +76,15 @@ public class PlayerField : MonoBehaviour
             unitRect.anchoredPosition = Vector2.zero;
             unitRect.localRotation = Quaternion.identity;
             unitRect.localScale = Vector3.one;
+            unit.PlaySummonAnimation();//소환 애니매이션
         }//카드가 소환될떄 사용
         return true;
+    }
+    public UnitBoardCardView GetUnit(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= units.Length)
+            return null;
+        return units[slotIndex];
     }
     public void ShowAvailableSlots()
     {

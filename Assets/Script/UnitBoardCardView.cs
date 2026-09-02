@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using DamageNumbersPro;
+using DG.Tweening;
 
 public class UnitBoardCardView : MonoBehaviour
 {
@@ -27,6 +28,15 @@ public class UnitBoardCardView : MonoBehaviour
     [SerializeField] private DamageNumber healPopupPrefab;
     private RectTransform unitRect;
     private RectTransform popupRoot;
+    [Header("공격 애니메이션")]
+    [SerializeField] private float attackStopDistance = 50f;
+    [SerializeField] private float attackMoveDuration = 0.12f;
+    [Header("피격 애니메이션")]
+    [SerializeField] private float hitDuration = 0.25f; // 흔들리는 시간
+    [SerializeField] private Vector2 hitStrength = new Vector2(10f, 0f); //흔들리는 세기 좌우
+    [SerializeField] private int hitVibrato = 10;//횟수
+    [Header("사망 애니메이션")]
+    [SerializeField] private float deathDuration = 0.3f;
 
     private int currentAttack;
     private int currentHealth;
@@ -34,10 +44,12 @@ public class UnitBoardCardView : MonoBehaviour
     private bool isSelected;
     private bool isTargetable;
     private PlayerState ownerPlayer;
+    private bool isAttacking;
     public PlayerState OwnerPlayer => ownerPlayer;
     public int CurrentAttack => currentAttack;
     public int CurrentHealth => currentHealth;
     public bool CanAttack => canAttack;
+    public RectTransform UnitRect => unitRect;
     public bool HasTaunt => cardSetting != null && cardSetting.HasKeyword(KeyWord.도발);
     public void Setup(CardSetting cardData , PlayerState player)
     {
@@ -102,8 +114,9 @@ public class UnitBoardCardView : MonoBehaviour
         if (currentHealth <= 0)
         {
             ownerPlayer.Graveyard.AddCard(cardSetting);
-            Destroy(gameObject);
+            PlayDeathAnimation();
         }
+        PlayHitAnimation();
     }
     public void TakeHeal(int effectValue)
     {
@@ -113,6 +126,7 @@ public class UnitBoardCardView : MonoBehaviour
         }
         currentHealth += effectValue;
         ShowHealNumber(effectValue);
+        PlayHealAnimation();
         UpdateStatText();
     }
     public void UseAttack()
@@ -156,4 +170,52 @@ public class UnitBoardCardView : MonoBehaviour
             return;
         healPopupPrefab.SpawnGUI(popupRoot,unitRect,Vector2.zero,heal);
     }
+    private void PlayHitAnimation()
+    {
+        if (unitRect == null || isAttacking)
+        {
+            return;
+        }
+
+        unitRect.DOShakeAnchorPos(hitDuration,hitStrength,hitVibrato);
+    }
+    public void PlaySummonAnimation()
+    {
+        transform.localScale = Vector3.zero;
+
+        transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+    }
+    private void PlayHealAnimation()
+    {
+        if (unitRect == null)
+        {
+            return;
+        }
+        unitRect.DOKill();
+        unitRect.anchoredPosition = Vector2.zero;
+        unitRect.localScale = Vector3.one;
+        unitRect.DOPunchScale(new Vector3(0.15f, 0.15f, 0f),0.35f,6,0.5f);
+    }
+    private void PlayDeathAnimation()
+    {
+        transform.DOScale(Vector3.zero, deathDuration).OnComplete(() => Destroy(gameObject));
+    }
+
+    public void PlayAttackAnimation(RectTransform targetRect, System.Action onHit)
+    {
+        if (unitRect == null || targetRect == null)
+            return;
+        isAttacking = true;
+        Vector3 originalPosition = unitRect.position;
+        Vector3 targetPosition = targetRect.position;
+        Vector3 direction = (targetPosition - originalPosition).normalized;
+        Vector3 attackPosition = targetPosition - direction * attackStopDistance;
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(unitRect.DOMove(attackPosition, attackMoveDuration).SetEase(Ease.OutQuad));
+        sequence.AppendCallback(() => onHit?.Invoke());
+        sequence.Append(unitRect.DOMove(originalPosition, attackMoveDuration).SetEase(Ease.InQuad));
+        sequence.OnComplete(() => isAttacking = false);
+        sequence.OnKill(() => isAttacking = false);
+    }
+
 }

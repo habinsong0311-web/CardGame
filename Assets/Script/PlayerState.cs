@@ -1,6 +1,7 @@
+using DamageNumbersPro;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using DamageNumbersPro;
 
 public class PlayerState : MonoBehaviour
 {
@@ -32,15 +33,20 @@ public class PlayerState : MonoBehaviour
     public string PlayerName => playerName;
     public int CurrentHealth => currentHealth;
     public int CurrentLight => currentLight;
+    public RectTransform HeroRect => heroRect;
 
     public Deck Deck => deck;
     public Hand Hand => hand;
     public Graveyard Graveyard => graveyard;
     public bool IsAlive => currentHealth > 0;
+    private Vector2 originalHeroPosition;
+    private Vector3 originalHeroScale;
 
     public void Initialize()
     {
         heroRect = GetComponent<RectTransform>();
+        originalHeroPosition = heroRect.anchoredPosition;
+        originalHeroScale = heroRect.localScale;
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas != null)
         {
@@ -95,6 +101,7 @@ public class PlayerState : MonoBehaviour
         {
             gameManager.EndGame(this);
         }
+        PlayHitAnimation();
     }
     public void TakeHeal(int effectValue)
     {
@@ -104,6 +111,7 @@ public class PlayerState : MonoBehaviour
         }
         currentHealth += effectValue;
         ShowHealNumber(effectValue);
+        PlayHealAnimation();
         healthText.text = currentHealth.ToString();
     }
     private void ShowDamageNumber(int damage)
@@ -117,6 +125,25 @@ public class PlayerState : MonoBehaviour
         if (healPopupPrefab == null || popupRoot == null || heroRect == null)
             return;
         healPopupPrefab.SpawnGUI(popupRoot, heroRect, Vector2.zero, heal);
+    }
+    private void PlayHitAnimation()
+    {
+        if (heroRect == null)
+        {
+            return;
+        }
+        heroRect.DOShakeAnchorPos(0.25f,new Vector2(10f, 0f),10,90f);
+    }
+    private void PlayHealAnimation()
+    {
+        if (heroRect == null)
+        {
+            return;
+        }
+        heroRect.DOKill();
+        heroRect.anchoredPosition = originalHeroPosition;
+        heroRect.localScale = originalHeroScale;
+        heroRect.DOPunchScale(new Vector3(0.15f, 0.15f, 0f), 0.35f, 6, 0.5f);
     }
 
 }

@@ -83,11 +83,15 @@ public class BattleManager : MonoBehaviour
         int targetDamage = target.CurrentAttack;
         string attackerName = selectedAttacker.name;
         string targetName = target.name;
+        UnitBoardCardView attacker = selectedAttacker;
         // 공격 기회를 먼저 사용합니다.
         selectedAttacker.UseAttack();
-        // 서로 동시에 피해를 받습니다.
-        target.TakeDamage(attackerDamage);
-        selectedAttacker.TakeDamage(targetDamage);
+        //공격 애니메이션
+        attacker.PlayAttackAnimation(target.UnitRect, () =>
+        {//쌍방 대미지
+            target.TakeDamage(attackerDamage);
+            attacker.TakeDamage(targetDamage);
+        });
         Debug.Log($"{attackerName}과 {targetName}이 서로 피해를 입었습니다.");
         ClearSelection();
     }
@@ -117,8 +121,14 @@ public class BattleManager : MonoBehaviour
             ClearSelection();
             return;
         }
-        targetPlayer.TakeDamage(selectedAttacker.CurrentAttack);
+        UnitBoardCardView attacker = selectedAttacker;
+        int attackerDamage = attacker.CurrentAttack;
+
         selectedAttacker.UseAttack();
+        attacker.PlayAttackAnimation(targetPlayer.HeroRect, () =>
+        {
+            targetPlayer.TakeDamage(attackerDamage);
+        });
 
         Debug.Log($"{selectedAttacker.name}이 {targetPlayer.PlayerName}을 공격했습니다."
         );
