@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class SimpleAI : MonoBehaviour
 {
@@ -31,9 +32,11 @@ public class SimpleAI : MonoBehaviour
             if (cardView == null)
                 continue;
             int score = card.Attack * 2 + card.MaxHealth - card.Cost;
+            if (card.Keywords.Count > 0)
+                score += card.Keywords.Count * 5;
             //점수 계산
             if (card.HasSummonEffect)
-            {//소환효과있는지 확인하고 있으면 효과발동
+            {
                 AddSummonEffectActions(actions, card, cardView, emptySlot, score);
                 continue;
             }
@@ -179,7 +182,7 @@ public class SimpleAI : MonoBehaviour
                             int unitScore = card.EffectValue * 3;
                             unitScore += target.CurrentAttack * 2;
 
-                            if (target.CurrentHealth <= 3)
+                            if (target.CurrentHealth <= 2)
                             {
                                 unitScore += 50;
                             }
@@ -341,7 +344,6 @@ public class SimpleAI : MonoBehaviour
             }
             totalAttack += unit.CurrentAttack;
         }
-
         return totalAttack;
     }
     private int CalculateUnitAttackScore(UnitBoardCardView attacker, UnitBoardCardView target)
