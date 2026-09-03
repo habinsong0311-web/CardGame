@@ -45,15 +45,20 @@ public class PlayerState : MonoBehaviour
     public void Initialize()
     {
         heroRect = GetComponent<RectTransform>();
-        originalHeroPosition = heroRect.anchoredPosition;
-        originalHeroScale = heroRect.localScale;
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas != null)
         {
             popupRoot = canvas.GetComponent<RectTransform>();
         }
         currentHealth = maxHealth;
-        healthText.text = currentHealth.ToString();
+        if (healthText != null)
+        {
+            healthText.text = currentHealth.ToString();
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: healthText가 연결되지 않았습니다.");
+        }
         UpdateLightText();
     }
     private void UpdateLightText()
@@ -87,7 +92,6 @@ public class PlayerState : MonoBehaviour
         SetLight();
         UpdateLightText();
     }
-
     public void TakeDamage(int damage)
     {
         if (damage <= 0)
@@ -97,10 +101,7 @@ public class PlayerState : MonoBehaviour
         currentHealth -= damage;
         ShowDamageNumber(damage);
         healthText.text = currentHealth.ToString();
-        if (!IsAlive)
-        {
-            gameManager.EndGame(this);
-        }
+        gameManager.CheckDeathBy(this);
         PlayHitAnimation();
     }
     public void TakeHeal(int effectValue)

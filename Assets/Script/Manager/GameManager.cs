@@ -21,11 +21,30 @@ public class GameManager : MonoBehaviour
 
     private bool isGameOver;
     public bool IsGameOver => isGameOver;
-
     void Start()
     {
-        victoryPanel.SetActive(false);
-        defeatPanel.SetActive(false);
+        if (player1 == null || player2 == null || player1Deck == null || player2Deck == null ||
+            player1Hand == null || player2Hand == null || turnManager == null)
+        {
+            Debug.LogError("GameManager: 필수 인스펙터 필드가 연결되지 않았습니다.");
+            return;
+        }
+        if (victoryPanel != null)
+        {
+            victoryPanel.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("GameManager: victoryPanel이 연결되지 않았습니다.");
+        }
+        if (defeatPanel != null)
+        {
+            defeatPanel.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("GameManager: defeatPanel이 연결되지 않았습니다.");
+        }
         player1Deck.InitializeDeck();
         player2Deck.InitializeDeck();
         player1.Initialize();
@@ -38,6 +57,7 @@ public class GameManager : MonoBehaviour
         turnManager.StartGame();
     }
     //테스트 드로우
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void Update()
     {
         if(Input.GetKeyDown(KeyCode.Z))
@@ -49,6 +69,7 @@ public class GameManager : MonoBehaviour
             DrawPlayer2Card();
         }
     }
+#endif
 
     public void DrawPlayer1Card()
     {
@@ -97,6 +118,19 @@ public class GameManager : MonoBehaviour
             victoryPanel.SetActive(false);
         }
         Debug.Log($"{winner.PlayerName} 승리! " + $"{loser.PlayerName} 패배!");
-
+    }
+    public void CheckDeathBy(PlayerState player)
+    {
+        if (player != null && !player.IsAlive)
+        {
+            EndGame(player);
+        }
+    }
+    public void CheckDeckOut(PlayerState player, CardSetting drawnCard)
+    {
+        if (player != null && drawnCard == null)
+        {
+            EndGame(player);
+        }
     }
 }

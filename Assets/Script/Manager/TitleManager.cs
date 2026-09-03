@@ -12,6 +12,10 @@ public class TitleManager : MonoBehaviour
     {
         SceneManager.LoadScene("TitleScene");
     }
+    public void DeckSelectScene()
+    {
+        SceneManager.LoadScene("DeckSelectScene");
+    }
 
     public void QuitGame()
     {

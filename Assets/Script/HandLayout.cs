@@ -108,9 +108,9 @@ public class HandLayout : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            if(canOpenHand)
+            if (!canOpenHand)
                 return;
-            if(isOpened == true)
+            if (isOpened == true)
             {
                 isOpened = false;
                 return;

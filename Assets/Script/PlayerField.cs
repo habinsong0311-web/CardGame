@@ -57,6 +57,11 @@ public class PlayerField : MonoBehaviour
             Debug.Log("선택한 슬롯이 비어 있지 않습니다.");
             return false;
         }//빈 슬롯인지 확인
+        if (unitBoardPrefab == null)
+        {
+            Debug.LogError("PlayerField: unitBoardPrefab이 인스펙터에 연결되어 있지 않습니다.");
+            return false;
+        }
         UnitBoardCardView unit = Instantiate(unitBoardPrefab, slots[slotIndex]);
         unit.Setup(card, ownerPlayer);// 정보값을 전달 및 생성
         UnitSelect unitSelect = unit.GetComponent<UnitSelect>();

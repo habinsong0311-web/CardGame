@@ -16,6 +16,8 @@ public class SimpleAI : MonoBehaviour
     [Header("설정")]
     [SerializeField] private float actionDelay = 1f;
 
+
+    private const int LethalScoreBonus = 1_000_000;
     private bool isPlaying;
     private void AddSummonActions(List<AIAction> actions)
     {
@@ -60,11 +62,11 @@ public class SimpleAI : MonoBehaviour
     {
         switch (card.CardId)
         {
-            case "U006":
+            case CardEffectId.FireBallDamageSummon:
                 AddDamageSummonActions(actions, card, cardView, slotIndex, score);
                 break;
 
-            case "U004":
+            case CardEffectId.HealSummon:
                 AddHealSummonActions(actions, card, cardView, slotIndex, score);
                 break;
         }
@@ -74,7 +76,7 @@ public class SimpleAI : MonoBehaviour
         int playerScore = score + card.EffectValue * 5;
         if (card.EffectValue >= enemyPlayer.CurrentHealth)
         {
-            playerScore += 1000000;
+            playerScore += LethalScoreBonus;
         }
         AddSummonAction(actions,card,cardView,slotIndex,playerScore,targetPlayer: enemyPlayer);
         foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
@@ -125,12 +127,12 @@ public class SimpleAI : MonoBehaviour
                 continue;
             switch (card.CardId)
             {
-                case "M002":
+                case CardEffectId.FireBallDamageSkill:
                     {
                         int playerScore = card.EffectValue * 5;
                         if (card.EffectValue >= enemyPlayer.CurrentHealth)
                         {
-                            playerScore += 1000000;
+                            playerScore += LethalScoreBonus;
                         }
                         AIAction playerAction = new AIAction();
                         playerAction.ActionType = AIActionType.UseSkillOnPlayer;
@@ -159,7 +161,7 @@ public class SimpleAI : MonoBehaviour
                         }
                         break;
                     }
-                case "M001":
+                case CardEffectId.HealSkill:
                     {
                         int playerScore = card.EffectValue * 3;
                         if (aiPlayer.CurrentHealth <= 10)
@@ -235,7 +237,7 @@ public class SimpleAI : MonoBehaviour
 
             if (attacker.CurrentAttack >= enemyPlayer.CurrentHealth)
             {
-                score += 1000000;
+                score += LethalScoreBonus;
             }
             AIAction action = new AIAction();
             action.ActionType = AIActionType.AttackPlayer;
@@ -386,280 +388,3 @@ public class SimpleAI : MonoBehaviour
         StartCoroutine(PlayTurn());
     }
 }
-
-
-
-
-//기존 만들었더 AI함수 추후 삭제
-
-    //private IEnumerator PlayTurn()
-    //{
-    //    isPlaying = true;
-    //    yield return new WaitForSeconds(actionDelay);
-    //    while (TrySummonBestUnit())
-    //    {
-    //        yield return new WaitForSeconds(actionDelay);
-    //    }
-    //    while (TryUseBestSkill())
-    //    {
-    //        yield return new WaitForSeconds(actionDelay);
-    //    }
-    //    while (TryBestAttack())
-    //    {
-    //        yield return new WaitForSeconds(actionDelay);
-    //    }
-    //    if (!gameManager.IsGameOver)
-    //    {
-    //        turnManager.EndTurn();
-    //        Debug.Log("AI턴 종료");
-    //    }
-
-//    isPlaying = false;
-//
-
-//    private bool TrySummonBestUnit()
-//    {
-//        CardSetting bestCard = null;
-//        int bestScore = int.MinValue; // 카드 점수 보관
-
-//        foreach (CardSetting card in aiPlayer.Hand.Cards)
-//        {
-//            if (card.CardType != CardType.Unit)
-//            {
-//                continue;
-//            }
-//            if (card.Cost > aiPlayer.CurrentLight)
-//            {
-//                continue;
-//            }
-//            int score = card.Attack * 2+ card.MaxHealth- card.Cost;
-//            if (score > bestScore)
-//            {
-//                bestScore = score;
-//                bestCard = card;
-//            }
-//        }
-//        if (bestCard == null)
-//        {
-//            return false;
-//        }
-//        int emptySlot = aiPlayer.Field.FindEmptySlot();
-//        if (emptySlot == -1)
-//        {
-//            return false;
-//        }
-//        CardView cardView =aiPlayer.Hand.FindCardView(bestCard);
-//        if (cardView == null)
-//        {
-//            return false;
-//        }
-//        cardPlayManager.SelectCard(bestCard,cardView,aiPlayer.Hand);
-//        cardPlayManager.TrySummon(aiPlayer,emptySlot);
-//        Debug.Log($"AI가 {bestCard.CardName}을 소환했습니다. 점수: {bestScore}"
-//        );
-//        return true;
-//    }
-
-//    private bool TryBestAttack()
-//    {
-//        if (gameManager.IsGameOver)
-//        {
-//            return false;
-//        }
-//        UnitBoardCardView bestAttacker = null;
-//        UnitBoardCardView bestTarget = null;
-//        int bestScore = int.MinValue;
-//        foreach (UnitBoardCardView attacker in aiPlayer.Field.Units)
-//        {
-//            if (attacker == null || !attacker.CanAttack)
-//            {
-//                continue;
-//            }
-//            foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
-//            {//AI몬스터 한마리 한마리 전부 각각 상대 몬스터와 대조
-
-//                if (target == null)
-//                {
-//                    continue;
-//                }
-//                int score =CalculateUnitAttackScore(attacker,target); // 대조하고 점수를 확인
-//                if (score > bestScore)
-//                {//점수가 더 높은 놈을 선택
-//                    bestScore = score;
-//                    bestAttacker = attacker;
-//                    bestTarget = target;
-//                }
-//            }
-//        }
-//        if (bestAttacker == null || bestTarget == null)
-//        {
-//            return TryAttackPlayer();
-//        }
-//        battleManager.SelectUnit(bestAttacker);
-//        battleManager.SelectUnit(bestTarget);
-
-//        Debug.Log($"AI가 유닛을 공격했습니다. 공격 점수: {bestScore}");
-//        return true;
-//    }
-//    private bool TryAttackPlayer()
-//    {
-//        if (enemyPlayer.Field.HasAnyUnit())
-//        {
-//            return false;
-//        }
-//        UnitBoardCardView bestAttacker = null;
-//        int bestScore = int.MinValue;
-//        foreach (UnitBoardCardView attacker in aiPlayer.Field.Units)//상대 필드 검사
-//        {
-//            if (attacker == null || !attacker.CanAttack)
-//            {
-//                continue;
-//            }
-//            int score = attacker.CurrentAttack * 5;//5는 임의의값 공격력이 높을수록 직접공격을 함
-//            if (attacker.CurrentAttack >= enemyPlayer.CurrentHealth)
-//            {//승리할수있으면 무조건 이걸 하기위해서 점수를 높게줌
-//                score += 1000000;
-//            }
-//            if (score > bestScore)
-//            {
-//                bestScore = score;
-//                bestAttacker = attacker;
-//            }
-//        }
-//        if (bestAttacker == null)
-//        {
-//            return false;
-//        }
-//        battleManager.SelectUnit(bestAttacker);
-//        battleManager.AttackPlayer(enemyPlayer);
-//        Debug.Log($"AI가 플레이어를 공격했습니다. 공격 점수: {bestScore}");
-//        return true;
-//    }
-
-//    private bool TryUseBestSkill()
-//    {
-//        if (gameManager.IsGameOver)
-//        {
-//            return false;
-//        }
-//        //행동 보관
-//        CardSetting bestCard = null;
-//        UnitBoardCardView bestUnitTarget = null;
-//        PlayerState bestPlayerTarget = null;
-//        int bestScore = int.MinValue;
-
-
-//        foreach (CardSetting card in aiPlayer.Hand.Cards)
-//        {//패 확인으로 스킬만 확인
-//            if (card.CardType != CardType.Skill)
-//            {
-//                continue;
-//            }
-//            if (card.Cost > aiPlayer.CurrentLight)
-//            {//빛 부족 제외
-//                continue;
-//            }
-//            switch (card.CardId)
-//            {
-//                case "M002": // 화염구 
-//                    int playerDamageScore = card.EffectValue * 5;
-
-//                    if (card.EffectValue >= enemyPlayer.CurrentHealth)
-//                    {//명치시 승리할수있으면
-//                        playerDamageScore += 1000000;
-//                    }
-
-//                    if (playerDamageScore > bestScore)
-//                    {//플레이어 공격이 좋은지 몬스터 공격이 좋은지 판별
-//                        bestScore = playerDamageScore;
-//                        bestCard = card;
-//                        bestPlayerTarget = enemyPlayer;
-//                        bestUnitTarget = null;
-//                    }
-//                    foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
-//                    {
-//                        if (target == null)
-//                        {
-//                            continue;
-//                        }
-//                        int unitDamageScore = card.EffectValue * 3;
-//                        unitDamageScore += target.CurrentAttack * 4;
-//                        if (card.EffectValue >= target.CurrentHealth)
-//                        {
-//                            unitDamageScore += 100;
-//                        }
-//                        if (unitDamageScore > bestScore)
-//                        {
-//                            bestScore = unitDamageScore;
-//                            bestCard = card;
-//                            bestUnitTarget = target;
-//                            bestPlayerTarget = null;
-//                        }
-//                    }
-//                    break;
-//                case "M001":
-//                    int playerHealScore = card.EffectValue * 3;
-
-//                    if (aiPlayer.CurrentHealth <= 10)
-//                    {
-//                        playerHealScore += 100;
-//                    }
-
-//                    if (playerHealScore > bestScore)
-//                    {
-//                        bestScore = playerHealScore;
-//                        bestCard = card;
-//                        bestPlayerTarget = aiPlayer;
-//                        bestUnitTarget = null;
-//                    }
-//                    foreach (UnitBoardCardView target in aiPlayer.Field.Units)
-//                    {
-//                        if (target == null)
-//                        {
-//                            continue;
-//                        }
-//                        int unitHealScore = card.EffectValue * 3;
-//                        unitHealScore += target.CurrentAttack * 2;
-//                        if (target.CurrentHealth <= 3)
-//                        {
-//                            unitHealScore += 50;
-//                        }
-//                        if (unitHealScore > bestScore)
-//                        {
-//                            bestScore = unitHealScore;
-//                            bestCard = card;
-//                            bestUnitTarget = target;
-//                            bestPlayerTarget = null;
-//                        }
-//                    }
-//                    break;
-//            }
-//        }
-//        if (bestCard == null)
-//        {//스킬카드가 없으면 끝
-//            return false;
-//        }
-//        CardView cardView = aiPlayer.Hand.FindCardView(bestCard);
-//        if (cardView == null)
-//        {//선택한 카드를 찾고 없으면 취소(없으면 오류)
-//            Debug.Log("대상을 찾기 못했습니다");
-//            return false;
-//        }
-//        cardPlayManager.SelectCard(bestCard, cardView, aiPlayer.Hand);
-//        if (bestUnitTarget != null)
-//        {
-//            cardPlayManager.TryUseSkill(bestUnitTarget);
-//        }
-//        else if (bestPlayerTarget != null)
-//        {
-//            cardPlayManager.TryUseSkill(bestPlayerTarget);
-//        }
-//        else
-//        {
-//            cardPlayManager.ClearSelection();
-//            return false;
-//        }
-//        Debug.Log($"AI가 {bestCard.CardName}을 사용했습니다. 마법 점수: {bestScore}");
-//        return true;
-//    }
-//}

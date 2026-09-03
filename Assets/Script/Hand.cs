@@ -28,7 +28,6 @@ public class Hand : MonoBehaviour
         if (card == null)
         {
             return;
-            //나중에 패배 추가
         }
         if (cards.Count >= maxHandSize)
         {
@@ -37,18 +36,6 @@ public class Hand : MonoBehaviour
         }
         cards.Add(card);
         CreateCardView(card);
-        DiscardExcessCards();
-    }
-    private void DiscardExcessCards()
-    {
-        while (cards.Count > maxHandSize)
-        {
-            int lastIndex = cards.Count - 1;
-            CardSetting discardedCard = cards[lastIndex];
-
-            cards.RemoveAt(lastIndex);
-            graveyard.AddCard(discardedCard);
-        }
     }
     public void RemoveCard(CardSetting card,CardView cardView)
     {

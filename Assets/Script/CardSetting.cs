@@ -10,7 +10,7 @@ public class CardSetting : ScriptableObject
     [SerializeField] private string cardName;
     [SerializeField,Min(0)] private int cost;
     [SerializeField,Min(0)] private int attack;
-    [SerializeField, Min(0)] private int maxHealth;
+    [SerializeField, Min(1)] private int maxHealth;
     [SerializeField, Min(1)] private int effectValue;
     [SerializeField] private string explanation;
     [SerializeField] private List<KeyWord> keywords = new List<KeyWord>();

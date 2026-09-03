@@ -14,6 +14,7 @@ public class CardPlayManager : MonoBehaviour
     private CardView selectedCardView;
     private Hand selectedHand;
     private CardSetting pendingSummonEffect;
+    private PlayerState summonEffectOwner;
     private UnitBoardCardView pendingSummonEffectSource;
     public bool IsSummonEffectTargeting => pendingSummonEffect != null;
     public void SelectCard(CardSetting card, CardView cardView, Hand hand)
@@ -114,9 +115,11 @@ public class CardPlayManager : MonoBehaviour
         {
             pendingSummonEffect = selectedCard;
             pendingSummonEffectSource = player.Field.GetUnit(slotIndex);
+            summonEffectOwner = player;
             ShowAllUnitTargets();
             Debug.Log($"{selectedCard.CardName}의 효과를 적용할 대상을 선택하세요.");
         }
+
         player.SpendLight(selectedCard.Cost);
         selectedHand.RemoveCard(selectedCard, selectedCardView);
         ClearSelection();
@@ -138,6 +141,13 @@ public class CardPlayManager : MonoBehaviour
         selectedCard = null;
         selectedCardView = null;
         selectedHand = null;
+    }
+    private void ClearSummonEffect()
+    {
+        pendingSummonEffect = null;
+        pendingSummonEffectSource = null;
+        summonEffectOwner = null;
+        HideAllUnitTargets();
     }
     private void ShowAllUnitTargets()
     {
@@ -162,10 +172,11 @@ public class CardPlayManager : MonoBehaviour
 
         if (pendingSummonEffect == null || target == null)
             return;
-
+        if (!turnManager.IsCurrentPlayer(summonEffectOwner))
+            return;
         switch (pendingSummonEffect.CardId)
         {
-            case "U006":
+            case CardEffectId.FireBallDamageSummon:
                 int unitDamage = pendingSummonEffect.EffectValue;
 
                 PlayFireball(pendingSummonEffectSource.UnitRect, target.UnitRect, () =>
@@ -175,7 +186,7 @@ public class CardPlayManager : MonoBehaviour
                 });
                 break;
 
-            case "U004":
+            case CardEffectId.HealSummon:
                 target.TakeHeal(pendingSummonEffect.EffectValue);
                 Debug.Log($"{target.name}을 {pendingSummonEffect.EffectValue}만큼 회복했습니다.");
                 break;
@@ -193,9 +204,11 @@ public class CardPlayManager : MonoBehaviour
             return;
         if (pendingSummonEffect == null || target == null)
             return;
+        if (!turnManager.IsCurrentPlayer(summonEffectOwner))
+            return;
         switch (pendingSummonEffect.CardId)
         {
-            case "U006":
+            case CardEffectId.FireBallDamageSummon:
                 int playerDamage = pendingSummonEffect.EffectValue;
                 PlayFireball(pendingSummonEffectSource.UnitRect, target.HeroRect, () =>
                 {
@@ -203,7 +216,7 @@ public class CardPlayManager : MonoBehaviour
                         target.TakeDamage(playerDamage);
                 });
                 break;
-            case "U004":
+            case CardEffectId.HealSummon:
                 target.TakeHeal(pendingSummonEffect.EffectValue);
                 Debug.Log($"{target.PlayerName}을 {pendingSummonEffect.EffectValue}만큼 회복했습니다.");
                 break;
@@ -238,7 +251,7 @@ public class CardPlayManager : MonoBehaviour
         }
         switch (selectedCard.CardId)
         {
-            case "M002":
+            case CardEffectId.FireBallDamageSkill:
                 int unitDamage = selectedCard.EffectValue;
 
                 PlayFireball(player.HeroRect, target.UnitRect, () =>
@@ -247,7 +260,7 @@ public class CardPlayManager : MonoBehaviour
                         target.TakeDamage(unitDamage);
                 });
                 break;
-            case "M001":
+            case CardEffectId.HealSkill:
                 target.TakeHeal(selectedCard.EffectValue);
                 break;
             default:
@@ -284,7 +297,7 @@ public class CardPlayManager : MonoBehaviour
         }
         switch (selectedCard.CardId)
         {
-            case "M002":
+            case CardEffectId.FireBallDamageSkill:
                 int playerDamage = selectedCard.EffectValue;
 
                 PlayFireball(player.HeroRect, target.HeroRect, () =>
@@ -293,7 +306,7 @@ public class CardPlayManager : MonoBehaviour
                         target.TakeDamage(playerDamage);
                 });
                 break;
-            case "M001":
+            case CardEffectId.HealSkill:
                 target.TakeHeal(selectedCard.EffectValue);
                 Debug.Log($"{target.name}에게 치유의 빛을 사용했습니다.");
                 break;
@@ -306,10 +319,11 @@ public class CardPlayManager : MonoBehaviour
         player.Graveyard.AddCard(selectedCard);
         ClearSelection();
     }
-    private void ClearSummonEffect()
+    public void ForceClearSummonEffect()
     {
         pendingSummonEffect = null;
         pendingSummonEffectSource = null;
+        summonEffectOwner = null;
         HideAllUnitTargets();
     }
     private void PlayFireball(RectTransform start, RectTransform target, System.Action onHit)
