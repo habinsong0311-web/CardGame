@@ -45,6 +45,8 @@ public class PlayerState : MonoBehaviour
     public void Initialize()
     {
         heroRect = GetComponent<RectTransform>();
+        originalHeroPosition = heroRect.anchoredPosition;
+        originalHeroScale = heroRect.localScale;
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas != null)
         {
