@@ -10,6 +10,7 @@ public class TitleManager : MonoBehaviour
     }
     public void ReturnTitle()
     {
+        Debug.Log("타이틀 돌아가기 버튼 실행");
         SceneManager.LoadScene("TitleScene");
     }
     public void DeckSelectScene()
@@ -19,6 +20,10 @@ public class TitleManager : MonoBehaviour
     public void DeckEditorScene()
     {
         SceneManager.LoadScene("DeckEditorScene");
+    }
+    public void BattleDeckSelectScene()
+    {
+        SceneManager.LoadScene("BattleDeckSelectScene");
     }
 
     public void QuitGame()

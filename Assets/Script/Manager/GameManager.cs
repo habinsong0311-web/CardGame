@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -45,7 +46,19 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("GameManager: defeatPanel이 연결되지 않았습니다.");
         }
-        player1Deck.InitializeDeck();
+        int mainDeckIndex = LoadMainDeckIndex();
+
+        if (mainDeckIndex == -1)
+        {
+            Debug.LogError("선택된 플레이어 덱이 없습니다.");
+            return;
+        }
+
+        if (!player1Deck.InitializeSavedDeck(mainDeckIndex))
+        {
+            Debug.LogError("플레이어 덱을 불러오지 못했습니다.");
+            return;
+        }
         player2Deck.InitializeDeck();
         player1.Initialize();
         player2.Initialize();
@@ -132,5 +145,21 @@ public class GameManager : MonoBehaviour
         {
             EndGame(player);
         }
+    }
+    private int LoadMainDeckIndex()
+    {
+        string filePath = Path.Combine(Application.persistentDataPath,"player_data.json");
+        if (!File.Exists(filePath))
+        {
+            Debug.Log("플레이어 저장 파일이 없습니다.");
+            return -1;
+        }
+        string json = File.ReadAllText(filePath);
+        PlayerSaveData playerData = JsonUtility.FromJson<PlayerSaveData>(json);
+        if (playerData == null)
+        {
+            return -1;
+        }
+        return playerData.mainDeckIndex;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System.IO;
 
 public class DeckEditorManager : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class DeckEditorManager : MonoBehaviour
     {
         LoadOwnedCards();
         CreateCardCollection();
+        LoadDeck();
         UpdateDeckCountText();
     }
     private void CreateCardCollection()
@@ -35,10 +37,10 @@ public class DeckEditorManager : MonoBehaviour
         List<CardSetting> sortedCards = new List<CardSetting>(ownedCards);
         sortedCards.Sort((a, b) =>
         {
-            int costResult =a.Cost.CompareTo(b.Cost);
+            int costResult = a.Cost.CompareTo(b.Cost);
             if (costResult != 0)
                 return costResult;
-            return string.Compare(a.CardName,b.CardName);
+            return string.Compare(a.CardName, b.CardName);
         });
         foreach (CardSetting card in sortedCards)
         {
@@ -47,11 +49,11 @@ public class DeckEditorManager : MonoBehaviour
             CardView cardView = null;
             if (card.CardType == CardType.Unit)
             {
-                cardView = Instantiate(unitCardPrefab,cardCollectionContent);
+                cardView = Instantiate(unitCardPrefab, cardCollectionContent);
             }
             else if (card.CardType == CardType.Skill)
             {
-                cardView = Instantiate(skillCardPrefab,cardCollectionContent);
+                cardView = Instantiate(skillCardPrefab, cardCollectionContent);
             }
             if (cardView == null)
                 continue;
@@ -121,7 +123,7 @@ public class DeckEditorManager : MonoBehaviour
                 count++;
             }
         }
-        if (deckListItems.TryGetValue(card.CardId,out DeckListItem item))
+        if (deckListItems.TryGetValue(card.CardId, out DeckListItem item))
         {
             if (count == 0)
             {
@@ -134,7 +136,7 @@ public class DeckEditorManager : MonoBehaviour
         }
         if (count > 0)
         {
-            DeckListItem newItem = Instantiate(deckListItemPrefab,currentDeckContent);
+            DeckListItem newItem = Instantiate(deckListItemPrefab, currentDeckContent);
             newItem.Setup(card, count, this);
             deckListItems.Add(card.CardId, newItem);
         }
@@ -147,7 +149,7 @@ public class DeckEditorManager : MonoBehaviour
             int costResult = a.CardData.Cost.CompareTo(b.CardData.Cost);
             if (costResult != 0)
                 return costResult;
-            return string.Compare(a.CardData.CardName,b.CardData.CardName);
+            return string.Compare(a.CardData.CardName, b.CardData.CardName);
         });
         for (int i = 0; i < items.Count; i++)
         {
@@ -158,5 +160,115 @@ public class DeckEditorManager : MonoBehaviour
     {
         CardSetting[] loadedCards = Resources.LoadAll<CardSetting>("Cards");
         ownedCards = new List<CardSetting>(loadedCards);
+    }
+    private string GetDeckFilePath()
+    {
+        int deckIndex =
+            DeckSelection.SelectedDeckIndex;
+
+        return Path.Combine(
+            Application.persistentDataPath,
+            $"deck_{deckIndex}.json"
+        );
+    }
+    public void SaveDeck()
+    {
+        if (currentDeck.Count != maxDeckSize)
+        {
+            Debug.Log($"덱은 정확히 {maxDeckSize}장이어야 합니다.");
+            return;
+        }
+
+        DeckSaveData saveData = new DeckSaveData();
+        saveData.deckIndex =DeckSelection.SelectedDeckIndex;
+        saveData.deckName =$"{saveData.deckIndex}번 덱";
+        Dictionary<string, int> cardCounts = new Dictionary<string, int>();
+        foreach (CardSetting card in currentDeck)
+        {
+            if (cardCounts.ContainsKey(card.CardId))
+            {
+                cardCounts[card.CardId]++;
+            }
+            else
+            {
+                cardCounts.Add(card.CardId, 1);
+            }
+        }
+        foreach (var cardCount in cardCounts)
+        {
+            DeckCardSaveData cardData = new DeckCardSaveData();
+            cardData.cardId = cardCount.Key;
+            cardData.count = cardCount.Value;
+            saveData.cards.Add(cardData);
+        }
+        string json = JsonUtility.ToJson(saveData, true);
+        File.WriteAllText(GetDeckFilePath(),json);
+        Debug.Log($"{saveData.deckIndex}번 덱을 저장했습니다.");
+    }
+    private CardSetting FindOwnedCard(string cardId)
+    {
+        foreach (CardSetting card in ownedCards)
+        {
+            if (card.CardId == cardId)
+            {
+                return card;
+            }
+        }
+        return null;
+    }
+    private void ClearDeckListItems()
+    {
+        foreach (DeckListItem item in deckListItems.Values)
+        {
+            if (item != null)
+            {
+                Destroy(item.gameObject);
+            }
+        }
+        deckListItems.Clear();
+    }
+    public void LoadDeck()
+    {
+        string filePath = GetDeckFilePath();
+        if (!File.Exists(filePath))
+        {
+            Debug.Log($"{DeckSelection.SelectedDeckIndex}번 덱은 아직 저장되지 않았습니다.");
+            return;
+        }
+        string json = File.ReadAllText(filePath);
+        DeckSaveData saveData = JsonUtility.FromJson<DeckSaveData>(json);
+        if (saveData == null || saveData.cards == null)
+        {
+            Debug.Log("덱 데이터를 불러올 수 없습니다.");
+            return;
+        }
+        currentDeck.Clear();
+        ClearDeckListItems();
+        foreach (DeckCardSaveData savedCard in saveData.cards)
+        {
+            CardSetting card = FindOwnedCard(savedCard.cardId);
+            if (card == null)
+            {
+                Debug.LogWarning($"카드를 찾을 수 없습니다: {savedCard.cardId}");
+                continue;
+            }
+            int count = Mathf.Clamp(savedCard.count,0,maxSameCardCount);
+            for (int i = 0; i < count; i++)
+            {
+                if (currentDeck.Count >= maxDeckSize)
+                    break;
+                currentDeck.Add(card);
+            }
+        }
+        foreach (CardSetting card in currentDeck)   
+        {
+            if (!deckListItems.ContainsKey(card.CardId))
+            {
+                UpdateDeckListItem(card);
+            }
+        }
+        SortDeckList();
+        UpdateDeckCountText();
+        Debug.Log($"{saveData.deckIndex}번 덱을 불러왔습니다.");
     }
 }

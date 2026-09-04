@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System.IO;
 [System.Serializable] public class DeckEntry
 {
     [SerializeField] private CardSetting card; //들어갈 카드
@@ -57,6 +58,7 @@ public class Deck : MonoBehaviour
         CreateDeck();
         ShuffleDeck();
     }
+
     public void ShuffleDeck()
     {
         for (int i = remainingCards.Count - 1; i > 0; i--)
@@ -66,6 +68,50 @@ public class Deck : MonoBehaviour
             remainingCards[i] = remainingCards[randomIndex];
             remainingCards[randomIndex] = temporaryCard;
         }
+    }
+    public bool InitializeSavedDeck(int deckIndex)
+    {
+        remainingCards.Clear();
+        string filePath = Path.Combine(Application.persistentDataPath,$"deck_{deckIndex}.json");
+        if (!File.Exists(filePath))
+        {
+            Debug.Log($"{deckIndex}번 덱 파일이 없습니다.");
+            return false;
+        }
+        string json = File.ReadAllText(filePath);
+        DeckSaveData saveData = JsonUtility.FromJson<DeckSaveData>(json);
+
+        if (saveData == null || saveData.cards == null)
+        {
+            Debug.Log("덱 데이터를 불러올 수 없습니다.");
+            return false;
+        }
+        CardSetting[] allCards =Resources.LoadAll<CardSetting>("Cards");
+        foreach (DeckCardSaveData savedCard in saveData.cards)
+        {
+            CardSetting foundCard = null;
+
+            foreach (CardSetting card in allCards)
+            {
+                if (card.CardId == savedCard.cardId)
+                {
+                    foundCard = card;
+                    break;
+                }
+            }
+            if (foundCard == null)
+            {
+                Debug.LogWarning($"카드를 찾을 수 없습니다: {savedCard.cardId}");
+                continue;
+            }
+            for (int i = 0; i < savedCard.count; i++)
+            {
+                remainingCards.Add(foundCard);
+            }
+        }
+        UpdateDeckCount();
+        ShuffleDeck();
+        return true;
     }
 }
 
