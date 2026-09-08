@@ -51,6 +51,11 @@ public class UnitBoardCardView : MonoBehaviour
     public bool CanAttack => canAttack;
     public RectTransform UnitRect => unitRect;
     public bool HasTaunt => cardSetting != null && cardSetting.HasKeyword(KeyWord.도발);
+
+    public event System.Action<UnitBoardCardView> StatsChanged;
+    public event System.Action<UnitBoardCardView> AttackAvailabilityChanged;
+    private bool isDead;
+    public event System.Action<UnitBoardCardView> UnitDied;
     public void Setup(CardSetting cardData , PlayerState player)
     {
         if (cardData == null || player == null)
@@ -104,40 +109,48 @@ public class UnitBoardCardView : MonoBehaviour
     }
     public void TakeDamage(int damage)
     {
-        if (damage <= 0)
-        {
+        if (isDead || damage <= 0)
             return;
-        }
         currentHealth -= damage;
+        NotifyStatsChanged();
         ShowDamageNumber(damage);
         UpdateStatText();
         if (currentHealth <= 0)
         {
+            isDead = true;
+            UnitDied?.Invoke(this);
             ownerPlayer.Graveyard.AddCard(cardSetting);
             PlayDeathAnimation();
+            return;
         }
+
         PlayHitAnimation();
     }
     public void TakeHeal(int effectValue)
     {
-        if(effectValue <= 0)
-        {
+        if (isDead || effectValue <= 0)
             return;
-        }
         currentHealth += effectValue;
+        NotifyStatsChanged();
         ShowHealNumber(effectValue);
         PlayHealAnimation();
         UpdateStatText();
     }
     public void UseAttack()
     {
+        if (!canAttack)
+            return;
         canAttack = false;
         UpdateFrameColor();
+        AttackAvailabilityChanged?.Invoke(this);
     }
     public void ResetAttack()
     {
+        if (canAttack)
+            return;
         canAttack = true;
         UpdateFrameColor();
+        AttackAvailabilityChanged?.Invoke(this);
     }
     private Color GetStatColor(int currentValue,int originalValue)
     {
@@ -204,7 +217,10 @@ public class UnitBoardCardView : MonoBehaviour
     public void PlayAttackAnimation(RectTransform targetRect, System.Action onHit)
     {
         if (unitRect == null || targetRect == null)
+        {
+            onHit?.Invoke();
             return;
+        }
         isAttacking = true;
         Vector3 originalPosition = unitRect.position;
         Vector3 targetPosition = targetRect.position;
@@ -216,6 +232,10 @@ public class UnitBoardCardView : MonoBehaviour
         sequence.Append(unitRect.DOMove(originalPosition, attackMoveDuration).SetEase(Ease.InQuad));
         sequence.OnComplete(() => isAttacking = false);
         sequence.OnKill(() => isAttacking = false);
+    }
+    private void NotifyStatsChanged()
+    {
+        StatsChanged?.Invoke(this);
     }
 
 }

@@ -82,10 +82,9 @@ public class Hand : MonoBehaviour
             cardPreview.Setup(card, cardPreviewRoot);
         }
         CardSelect cardSelect = cardView.GetComponent<CardSelect>();
-        if (cardSelect != null)
+        if (cardSelect != null && !hideCards)
         {
-            cardSelect.Setup(card,cardView,this,cardPlayManager);
-
+            cardSelect.Setup(card, cardView, this, cardPlayManager);
         }
     }
 

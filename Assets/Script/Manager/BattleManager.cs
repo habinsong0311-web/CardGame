@@ -13,6 +13,12 @@ public class BattleManager : MonoBehaviour
         {
             return;
         }
+
+        if (gameManager.IsResolvingAction)
+        {
+            return;
+        }
+
         if (unit == null)
         {
             return;
@@ -51,13 +57,10 @@ public class BattleManager : MonoBehaviour
         selectedAttacker.SetSelected(true);
         Debug.Log($"{unit.name}을 공격자로 선택했습니다.");
     }
-
     private void AttackTarget(UnitBoardCardView target)
     {
         if (selectedAttacker == null || target == null)
-        {
             return;
-        }
         if (selectedAttacker == target)
         {
             Debug.Log("자기 자신은 공격할 수 없습니다.");
@@ -84,13 +87,13 @@ public class BattleManager : MonoBehaviour
         string attackerName = selectedAttacker.name;
         string targetName = target.name;
         UnitBoardCardView attacker = selectedAttacker;
-        // 공격 기회를 먼저 사용합니다.
         selectedAttacker.UseAttack();
-        //공격 애니메이션
+        gameManager.BeginAction();
         attacker.PlayAttackAnimation(target.UnitRect, () =>
-        {//쌍방 대미지
+        {
             target.TakeDamage(attackerDamage);
             attacker.TakeDamage(targetDamage);
+            gameManager.EndAction();
         });
         Debug.Log($"{attackerName}과 {targetName}이 서로 피해를 입었습니다.");
         ClearSelection();
@@ -125,13 +128,14 @@ public class BattleManager : MonoBehaviour
         int attackerDamage = attacker.CurrentAttack;
 
         selectedAttacker.UseAttack();
+        gameManager.BeginAction();
+
         attacker.PlayAttackAnimation(targetPlayer.HeroRect, () =>
         {
             targetPlayer.TakeDamage(attackerDamage);
-        });
 
-        Debug.Log($"{selectedAttacker.name}이 {targetPlayer.PlayerName}을 공격했습니다."
-        );
+            gameManager.EndAction();
+        });
 
         ClearSelection();
     }

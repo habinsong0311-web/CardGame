@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class SimpleAI : MonoBehaviour
@@ -19,6 +18,21 @@ public class SimpleAI : MonoBehaviour
 
     private const int LethalScoreBonus = 1_000_000;
     private bool isPlaying;
+    private Dictionary<
+    (UnitBoardCardView attacker, UnitBoardCardView target), AIAction> unitAttackActions
+        = new Dictionary<(UnitBoardCardView attacker, UnitBoardCardView target), AIAction>();//공격 후보 저장
+    private HashSet<UnitBoardCardView> changedUnits = new HashSet<UnitBoardCardView>(); //능력치가 변경된 유닛들
+    private HashSet<UnitBoardCardView> subscribedUnits = new HashSet<UnitBoardCardView>();//이미 알림을 연결한 유닛들
+    private HashSet<UnitBoardCardView> attackAvailabilityChangedUnits = new HashSet<UnitBoardCardView>();
+    private HashSet<UnitBoardCardView> removedUnits = new HashSet<UnitBoardCardView>(); // 사망 유닛 기록
+    private bool attackActionsInitialized;
+    private bool tauntTargetsChanged;
+
+    private void Start()
+    {
+        aiPlayer.Field.UnitSummoned += OnUnitSummoned;
+        enemyPlayer.Field.UnitSummoned += OnUnitSummoned;
+    }
     private void AddSummonActions(List<AIAction> actions)
     {
         int emptySlot = aiPlayer.Field.FindEmptySlot();
@@ -78,7 +92,7 @@ public class SimpleAI : MonoBehaviour
         {
             playerScore += LethalScoreBonus;
         }
-        AddSummonAction(actions,card,cardView,slotIndex,playerScore,targetPlayer: enemyPlayer);
+        AddSummonAction(actions, card, cardView, slotIndex, playerScore, targetPlayer: enemyPlayer);
         foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
         {
             if (target == null)
@@ -89,7 +103,7 @@ public class SimpleAI : MonoBehaviour
             {
                 unitScore += 100;
             }
-            AddSummonAction(actions,card,cardView,slotIndex,unitScore,targetUnit: target);
+            AddSummonAction(actions, card, cardView, slotIndex, unitScore, targetUnit: target);
         }
     }
 
@@ -203,30 +217,9 @@ public class SimpleAI : MonoBehaviour
     }
     private void AddAttackActions(List<AIAction> actions)
     {
-        bool hasTaunt = enemyPlayer.Field.HasTauntUnit();
         if (enemyPlayer.Field.HasAnyUnit())
         {
-            foreach (UnitBoardCardView attacker in aiPlayer.Field.Units)
-            {
-                if (attacker == null || !attacker.CanAttack)
-                    continue;
-                foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
-                {
-                    if (target == null)
-                        continue;
-                    if (hasTaunt && !target.HasTaunt)
-                        continue;
-                    int score = CalculateUnitAttackScore(attacker, target);
-                    if (score == int.MinValue)
-                        continue;
-                    AIAction action = new AIAction();
-                    action.ActionType = AIActionType.AttackUnit;
-                    action.Score = score;
-                    action.Attacker = attacker;
-                    action.TargetUnit = target;
-                    actions.Add(action);
-                }
-            }
+            actions.AddRange(unitAttackActions.Values);
             return;
         }
         foreach (UnitBoardCardView attacker in aiPlayer.Field.Units)
@@ -234,8 +227,8 @@ public class SimpleAI : MonoBehaviour
             if (attacker == null || !attacker.CanAttack)
                 continue;
             int score = attacker.CurrentAttack * 5;
-
-            if (attacker.CurrentAttack >= enemyPlayer.CurrentHealth)
+            if (attacker.CurrentAttack >=
+                enemyPlayer.CurrentHealth)
             {
                 score += LethalScoreBonus;
             }
@@ -317,36 +310,38 @@ public class SimpleAI : MonoBehaviour
     private IEnumerator PlayTurn()
     {
         isPlaying = true;
+        foreach (UnitBoardCardView unit in aiPlayer.Field.Units)
+        {
+            RegisterUnitEvents(unit);
+        }
+
+        foreach (UnitBoardCardView unit in enemyPlayer.Field.Units)
+        {
+            RegisterUnitEvents(unit);
+        }
+        if (!attackActionsInitialized)
+        {
+            BuildInitialAttackActions();
+            attackActionsInitialized = true;
+        }
         yield return new WaitForSeconds(actionDelay);
 
         while (!gameManager.IsGameOver)
         {
+            RefreshAttackActions();
             List<AIAction> actions = CreatePossibleActions();
             AIAction bestAction = FindBestAction(actions);
             if (bestAction == null)
                 break;
             ExecuteAction(bestAction);
-            yield return new WaitForSeconds(actionDelay);
+            yield return new WaitUntil(() => !gameManager.IsResolvingAction || gameManager.IsGameOver);
         }
-        if (!gameManager.IsGameOver)
+            if (!gameManager.IsGameOver)
         {
             turnManager.EndTurn();
             Debug.Log("AI 턴 종료");
         }
         isPlaying = false;
-    }
-    private int GetTotalAvailableAttack()
-    {
-        int totalAttack = 0;
-        foreach (UnitBoardCardView unit in aiPlayer.Field.Units)
-        {
-            if (unit == null || !unit.CanAttack)
-            {
-                continue;
-            }
-            totalAttack += unit.CurrentAttack;
-        }
-        return totalAttack;
     }
     private int CalculateUnitAttackScore(UnitBoardCardView attacker, UnitBoardCardView target)
     {
@@ -355,14 +350,6 @@ public class SimpleAI : MonoBehaviour
         score += target.CurrentHealth * 2;
         bool canKillTarget = attacker.CurrentAttack >= target.CurrentHealth;
         bool attackerSurvives = attacker.CurrentHealth > target.CurrentAttack;
-        int totalAvailableAttack = GetTotalAvailableAttack();
-
-        bool canDefeatTogether = totalAvailableAttack >= target.CurrentHealth;
-
-        if (!canKillTarget && !attackerSurvives && !canDefeatTogether)
-        {
-            return int.MinValue;
-        }
         if (canKillTarget)
         {
             score += 100;
@@ -386,5 +373,203 @@ public class SimpleAI : MonoBehaviour
         }
         Debug.Log("AI턴 시작");
         StartCoroutine(PlayTurn());
+    }
+    private bool ShouldConsiderUnitAttack(UnitBoardCardView attacker, UnitBoardCardView target)
+    {
+        bool canKillTarget = attacker.CurrentAttack >= target.CurrentHealth;
+        bool attackerSurvives = attacker.CurrentHealth > target.CurrentAttack;
+        return canKillTarget || attackerSurvives;
+    }
+    private void OnUnitStatsChanged(UnitBoardCardView unit)
+    {
+        changedUnits.Add(unit);
+    }
+    private void RegisterUnitEvents(UnitBoardCardView unit)
+    {
+        if (unit == null)
+            return;
+
+        if (!subscribedUnits.Add(unit))
+            return;
+
+        unit.StatsChanged += OnUnitStatsChanged;
+        unit.AttackAvailabilityChanged += OnUnitAttackAvailabilityChanged;
+        unit.UnitDied += OnUnitDied;
+    }
+    private void OnDestroy()
+    {
+        if (aiPlayer != null && aiPlayer.Field != null)
+        {
+            aiPlayer.Field.UnitSummoned -= OnUnitSummoned;
+        }
+        if (enemyPlayer != null && enemyPlayer.Field != null)
+        {
+            enemyPlayer.Field.UnitSummoned -= OnUnitSummoned;
+        }
+        foreach (UnitBoardCardView unit in subscribedUnits)
+        {
+            if (unit != null)
+            {
+                unit.StatsChanged -= OnUnitStatsChanged;
+                unit.AttackAvailabilityChanged -= OnUnitAttackAvailabilityChanged;
+                unit.UnitDied -= OnUnitDied;
+            }
+        }
+        subscribedUnits.Clear();
+        changedUnits.Clear();
+        attackAvailabilityChangedUnits.Clear();
+        removedUnits.Clear();
+    }
+    private void OnUnitSummoned(UnitBoardCardView unit)
+    {
+        RegisterUnitEvents(unit);
+        changedUnits.Add(unit);
+        if (unit.OwnerPlayer == enemyPlayer && unit.HasTaunt)
+        {
+            tauntTargetsChanged = true;
+        }
+    }
+    private void OnUnitAttackAvailabilityChanged(UnitBoardCardView unit)
+    {
+        attackAvailabilityChangedUnits.Add(unit);
+    }
+    private void OnUnitDied(UnitBoardCardView unit)
+    {
+        if (unit.OwnerPlayer == enemyPlayer && unit.HasTaunt)
+        {
+            tauntTargetsChanged = true;
+        }
+        removedUnits.Add(unit);
+        changedUnits.Remove(unit);
+        attackAvailabilityChangedUnits.Remove(unit);
+        unit.StatsChanged -= OnUnitStatsChanged;
+        unit.AttackAvailabilityChanged -= OnUnitAttackAvailabilityChanged;
+        unit.UnitDied -= OnUnitDied;
+        subscribedUnits.Remove(unit);
+    }
+    private void UpdateUnitAttackAction(UnitBoardCardView attacker, UnitBoardCardView target)
+    {
+        var key = (attacker, target);
+        if (attacker == null || target == null || !attacker.CanAttack)
+        {
+            unitAttackActions.Remove(key);
+            return;
+        }
+        bool hasTaunt = enemyPlayer.Field.HasTauntUnit();
+        if (hasTaunt && !target.HasTaunt)
+        {
+            unitAttackActions.Remove(key);
+            return;
+        }
+        if (!ShouldConsiderUnitAttack(attacker, target))
+        {
+            unitAttackActions.Remove(key);
+            return;
+        }
+        int score = CalculateUnitAttackScore(attacker, target);
+        if (unitAttackActions.TryGetValue(key, out AIAction action))
+        {
+            action.Score = score;
+            return;
+        }
+        action = new AIAction();
+        action.ActionType = AIActionType.AttackUnit;
+        action.Score = score;
+        action.Attacker = attacker;
+        action.TargetUnit = target;
+        unitAttackActions.Add(key, action);
+    }
+    private void BuildInitialAttackActions()
+    {
+        unitAttackActions.Clear();
+        foreach (UnitBoardCardView attacker in aiPlayer.Field.Units)
+        {
+            if (attacker == null || !attacker.CanAttack)
+                continue;
+            foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
+            {
+                if (target == null)
+                    continue;
+                UpdateUnitAttackAction(attacker, target);
+            }
+        }
+    }
+    private void RefreshAttackerActions(UnitBoardCardView attacker)
+    {
+        foreach (UnitBoardCardView target in enemyPlayer.Field.Units)
+        {
+            if (target == null)
+                continue;
+            UpdateUnitAttackAction(attacker, target);
+        }
+    }
+    private void RefreshTargetActions(UnitBoardCardView target)
+    {
+        foreach (UnitBoardCardView attacker in aiPlayer.Field.Units)
+        {
+            if (attacker == null)
+                continue;
+            UpdateUnitAttackAction(attacker, target);
+        }
+    }
+    private void RemoveAttackActionsForUnit(UnitBoardCardView unit)
+    {
+        List<(UnitBoardCardView attacker,UnitBoardCardView target)> keysToRemove = 
+            new List<(UnitBoardCardView attacker,UnitBoardCardView target)>();
+        foreach (var key in unitAttackActions.Keys)
+        {
+            if (ReferenceEquals(key.attacker, unit) || ReferenceEquals(key.target, unit))
+            {
+                keysToRemove.Add(key);
+            }
+        }
+        foreach (var key in keysToRemove)
+        {
+            unitAttackActions.Remove(key);
+        }
+    }
+    private void RefreshAttackActions()
+    {
+        if (tauntTargetsChanged)
+        {
+            BuildInitialAttackActions();
+            tauntTargetsChanged = false;
+            removedUnits.Clear();
+            changedUnits.Clear();
+            attackAvailabilityChangedUnits.Clear();
+            return;
+        }
+        foreach (UnitBoardCardView unit in removedUnits)
+        {
+            RemoveAttackActionsForUnit(unit);
+        }
+        foreach (UnitBoardCardView unit in changedUnits)
+        {
+            if (unit == null)
+                continue;
+            if (unit.OwnerPlayer == aiPlayer)
+            {
+                RefreshAttackerActions(unit);
+            }
+            else if (unit.OwnerPlayer == enemyPlayer)
+            {
+                RefreshTargetActions(unit);
+            }
+        }
+        foreach (UnitBoardCardView unit
+                 in attackAvailabilityChangedUnits)
+        {
+            if (unit == null)
+                continue;
+            if (changedUnits.Contains(unit))
+                continue;
+            if (unit.OwnerPlayer == aiPlayer)
+            {
+                RefreshAttackerActions(unit);
+            }
+        }
+        removedUnits.Clear();
+        changedUnits.Clear();
+        attackAvailabilityChangedUnits.Clear();
     }
 }

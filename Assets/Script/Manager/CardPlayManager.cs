@@ -23,6 +23,10 @@ public class CardPlayManager : MonoBehaviour
         {
             return;
         }
+        if (gameManager.IsResolvingAction)
+        {
+            return;
+        }
         if (card == null || cardView == null || hand == null)
         {
             return;
@@ -152,16 +156,31 @@ public class CardPlayManager : MonoBehaviour
     private void ShowAllUnitTargets()
     {
         PlayerState currentPlayer = turnManager.currentPlayer;
+        if (currentPlayer == null)
+        {
+            return;
+        }
         PlayerState opponent = turnManager.GetOpponent(currentPlayer);
 
+        if (opponent == null)
+        {
+            return;
+        }
         currentPlayer.Field.ShowAllUnitTargets();
         opponent.Field.ShowAllUnitTargets();
     }
     private void HideAllUnitTargets()
     {
         PlayerState currentPlayer = turnManager.currentPlayer;
+        if (currentPlayer == null)
+        {
+            return;
+        }
         PlayerState opponent = turnManager.GetOpponent(currentPlayer);
-
+        if (opponent == null)
+        {
+            return;
+        }
         currentPlayer.Field.HideAllUnitTargets();
         opponent.Field.HideAllUnitTargets();
     }
@@ -328,13 +347,17 @@ public class CardPlayManager : MonoBehaviour
     }
     private void PlayFireball(RectTransform start, RectTransform target, System.Action onHit)
     {
-        if (fireballPrefab == null || effectRoot == null)
+        if (fireballPrefab == null || effectRoot == null || start == null || target == null)
         {
             onHit?.Invoke();
             return;
         }
+        gameManager.BeginAction();
         SkillEffectView fireball = Instantiate(fireballPrefab, effectRoot);
-        fireball.Play(start, target, onHit);
+        fireball.Play(start, target, () =>
+        {
+            onHit?.Invoke();
+            gameManager.EndAction();
+        });
     }
-
 }

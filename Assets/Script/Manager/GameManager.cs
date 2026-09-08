@@ -20,8 +20,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject victoryPanel;
     [SerializeField] private GameObject defeatPanel;
 
+    [Header("게임 메뉴 UI")]
+    [SerializeField] private GameObject gameMenu;
+
     private bool isGameOver;
     public bool IsGameOver => isGameOver;
+    private int resolvingActionCount;
+    public bool IsResolvingAction => resolvingActionCount > 0;
+   
     void Start()
     {
         if (player1 == null || player2 == null || player1Deck == null || player2Deck == null ||
@@ -53,7 +59,10 @@ public class GameManager : MonoBehaviour
             Debug.LogError("선택된 플레이어 덱이 없습니다.");
             return;
         }
-
+        if (gameMenu != null)
+        {
+            gameMenu.SetActive(false);
+        }
         if (!player1Deck.InitializeSavedDeck(mainDeckIndex))
         {
             Debug.LogError("플레이어 덱을 불러오지 못했습니다.");
@@ -122,13 +131,27 @@ public class GameManager : MonoBehaviour
         }
         if (winner == player1)
         {
-            defeatPanel.SetActive(false);
-            victoryPanel.SetActive(true);
+            if (defeatPanel != null)
+            {
+                defeatPanel.SetActive(false);
+            }
+
+            if (victoryPanel != null)
+            {
+                victoryPanel.SetActive(true);
+            }
         }
         else if (winner == player2)
         {
-            defeatPanel.SetActive(true);
-            victoryPanel.SetActive(false);
+            if (defeatPanel != null)
+            {
+                defeatPanel.SetActive(true);
+            }
+
+            if (victoryPanel != null)
+            {
+                victoryPanel.SetActive(false);
+            }
         }
         Debug.Log($"{winner.PlayerName} 승리! " + $"{loser.PlayerName} 패배!");
     }
@@ -162,4 +185,42 @@ public class GameManager : MonoBehaviour
         }
         return playerData.mainDeckIndex;
     }
+    public void BeginAction()
+    {
+        resolvingActionCount++;
+    }
+    public void EndAction()
+    {
+        resolvingActionCount--;
+        if (resolvingActionCount < 0)
+        {
+            resolvingActionCount = 0;
+        }
+    }
+    public void Surrender()
+    {
+        if (isGameOver)
+            return;
+        CloseGameMenu();
+        Debug.Log($"{player1.PlayerName}이 항복했습니다.");
+        EndGame(player1);
+    }
+    public void OpenGameMenu()
+    {
+        if (gameMenu == null)
+        {
+            return;
+        }
+
+        gameMenu.SetActive(true);
+    }
+    public void CloseGameMenu()
+    {
+        if (gameMenu == null)
+        {
+            return;
+        }
+        gameMenu.SetActive(false);
+    }
+
 }
