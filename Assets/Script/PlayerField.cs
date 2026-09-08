@@ -22,6 +22,7 @@ public class PlayerField : MonoBehaviour
     {
         units = new UnitBoardCardView[slots.Length];
     }
+    public event System.Action<UnitBoardCardView> UnitSummoned;
     public bool IsSlotEmpty(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= units.Length)
@@ -83,6 +84,7 @@ public class PlayerField : MonoBehaviour
             unitRect.localScale = Vector3.one;
             unit.PlaySummonAnimation();//소환 애니매이션
         }//카드가 소환될떄 사용
+        UnitSummoned?.Invoke(unit);
         return true;
     }
     public UnitBoardCardView GetUnit(int slotIndex)

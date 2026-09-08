@@ -71,6 +71,10 @@ public class TurnManager : MonoBehaviour
         {
             return;
         }
+        if (gameManager.IsResolvingAction)
+        {
+            return;
+        }
         battleManager.ClearSelection();
         cardPlayManager.ForceClearSummonEffect();
         cardPlayManager.ClearSelection();
@@ -91,13 +95,17 @@ public class TurnManager : MonoBehaviour
         return currentPlayer == player;
     }
     public PlayerState GetOpponent(PlayerState player)
-    {// 누구의 턴인지 확인하는거
+    {
         if (player == player1)
         {
             return player2;
         }
-
-        return player1;
+        if (player == player2)
+        {
+            return player1;
+        }
+        Debug.LogWarning("등록되지 않은 플레이어입니다.");
+        return null;
     }
     private void UpdateTurnUI()
     {
@@ -146,14 +154,11 @@ public class TurnManager : MonoBehaviour
     public void OnClickEndTurn()
     {
         if (gameManager.IsGameOver)
-        {
             return;
-        }
+        if (gameManager.IsResolvingAction)
+            return;
         if (currentPlayer == aiPlayer)
-        {
-            Debug.Log("상대 턴에는 턴을 종료할 수 없습니다.");
             return;
-        }
         EndTurn();
     }
 }
