@@ -55,7 +55,7 @@ SubShader {
 		"RenderType"="Transparent"
 	}
 
-	LOD 300
+	 300
 	Cull [_CullMode]
 
 	CGPROGRAM

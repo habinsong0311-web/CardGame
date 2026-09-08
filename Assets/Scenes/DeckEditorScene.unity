@@ -556,6 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 396ef9bb58ef0d247876d38dd116a560, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeckEditorManager
+  titleManager: {fileID: 1038414199}
   currentDeckContent: {fileID: 164602482}
   deckListItemPrefab: {fileID: 4264400370647509948, guid: 3614c307548fcb54a8fb707b40c0ba75, type: 3}
   unitCardPrefab: {fileID: 5687466441846136966, guid: eab9dde2ebf1e20479dd252105dad556, type: 3}

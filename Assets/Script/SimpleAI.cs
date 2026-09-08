@@ -314,7 +314,6 @@ public class SimpleAI : MonoBehaviour
         {
             RegisterUnitEvents(unit);
         }
-
         foreach (UnitBoardCardView unit in enemyPlayer.Field.Units)
         {
             RegisterUnitEvents(unit);
@@ -335,12 +334,17 @@ public class SimpleAI : MonoBehaviour
                 break;
             ExecuteAction(bestAction);
             yield return new WaitUntil(() => !gameManager.IsResolvingAction || gameManager.IsGameOver);
+            if (gameManager.IsGameOver)
+            {
+                break;
+            }
+            yield return new WaitForSeconds(actionDelay);
         }
             if (!gameManager.IsGameOver)
-        {
+            {
             turnManager.EndTurn();
             Debug.Log("AI 턴 종료");
-        }
+            }
         isPlaying = false;
     }
     private int CalculateUnitAttackScore(UnitBoardCardView attacker, UnitBoardCardView target)

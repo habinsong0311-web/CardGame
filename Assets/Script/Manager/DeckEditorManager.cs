@@ -5,11 +5,13 @@ using System.IO;
 
 public class DeckEditorManager : MonoBehaviour
 {
+    [Header("연결")]
+    [SerializeField] private TitleManager titleManager;
+
     [Header("현재 덱 화면")]
     [SerializeField] private Transform currentDeckContent;
     [SerializeField] private DeckListItem deckListItemPrefab;
     private Dictionary<string, DeckListItem> deckListItems = new Dictionary<string, DeckListItem>();
-
 
     [Header("카드 프리팹")]
     [SerializeField] private CardView unitCardPrefab;
@@ -71,7 +73,7 @@ public class DeckEditorManager : MonoBehaviour
 
         if (currentDeck.Count >= maxDeckSize)
         {
-            Debug.Log("덱에는 최대 30장까지 넣을 수 있습니다.");
+            Debug.Log($"덱에는 최대 {maxDeckSize}장까지 넣을 수 있습니다.");
             return;
         }
 
@@ -86,7 +88,7 @@ public class DeckEditorManager : MonoBehaviour
         }
         if (sameCardCount >= maxSameCardCount)
         {
-            Debug.Log("같은 카드는 최대 3장까지 넣을 수 있습니다.");
+            Debug.Log($"같은 카드는 최대 {maxSameCardCount}장까지 넣을 수 있습니다.");
             return;
         }
         currentDeck.Add(card);
@@ -203,6 +205,7 @@ public class DeckEditorManager : MonoBehaviour
         }
         string json = JsonUtility.ToJson(saveData, true);
         File.WriteAllText(GetDeckFilePath(),json);
+        titleManager.DeckSelectScene();
         Debug.Log($"{saveData.deckIndex}번 덱을 저장했습니다.");
     }
     private CardSetting FindOwnedCard(string cardId)
