@@ -36,19 +36,21 @@ public class DeckEditorManager : MonoBehaviour
     }
     private void CreateCardCollection()
     {
-        List<CardSetting> sortedCards = new List<CardSetting>(ownedCards);
+        List<CardSetting> sortedCards = new List<CardSetting>(ownedCards);//공간 만들기
         sortedCards.Sort((a, b) =>
-        {
+        {//코스트 순으로 정렬
             int costResult = a.Cost.CompareTo(b.Cost);
             if (costResult != 0)
                 return costResult;
             return string.Compare(a.CardName, b.CardName);
+            //코스트가 같으면 이름순으로
         });
         foreach (CardSetting card in sortedCards)
         {
             if (card == null)
                 continue;
             CardView cardView = null;
+            //타입에 맞는 카드 생성
             if (card.CardType == CardType.Unit)
             {
                 cardView = Instantiate(unitCardPrefab, cardCollectionContent);
@@ -59,9 +61,9 @@ public class DeckEditorManager : MonoBehaviour
             }
             if (cardView == null)
                 continue;
-            cardView.Setup(card);
+            cardView.Setup(card);//카드안에 데이터 넣기
             DeckEditorCard editorCard = cardView.gameObject.AddComponent<DeckEditorCard>();
-            editorCard.Setup(card, this);
+            editorCard.Setup(card, this);//덱에 카드 전달
         }
     }
     public void AddCardToDeck(CardSetting card)
@@ -109,10 +111,10 @@ public class DeckEditorManager : MonoBehaviour
             return;
         if (!currentDeck.Contains(card))
             return;
-        currentDeck.Remove(card);
-        UpdateDeckListItem(card);
-        SortDeckList();
-        UpdateDeckCountText();
+        currentDeck.Remove(card);// 현재 덱에서 선택한 카드 한 장 제거
+        UpdateDeckListItem(card);// 덱 목록에 표시되는 카드 수량 갱신
+        SortDeckList();// 덱 목록을 카드 코스트 순서로 다시 정렬
+        UpdateDeckCountText();// 현재 덱의 전체 카드 수 표시 갱신
         Debug.Log($"{card.CardName} 제거, 현재 덱: {currentDeck.Count}/{maxDeckSize}");
     }
     private void UpdateDeckListItem(CardSetting card)
@@ -165,13 +167,9 @@ public class DeckEditorManager : MonoBehaviour
     }
     private string GetDeckFilePath()
     {
-        int deckIndex =
-            DeckSelection.SelectedDeckIndex;
+        int deckIndex = DeckSelection.SelectedDeckIndex;
 
-        return Path.Combine(
-            Application.persistentDataPath,
-            $"deck_{deckIndex}.json"
-        );
+        return Path.Combine(Application.persistentDataPath,$"deck_{deckIndex}.json");
     }
     public void SaveDeck()
     {
@@ -199,12 +197,12 @@ public class DeckEditorManager : MonoBehaviour
         foreach (var cardCount in cardCounts)
         {
             DeckCardSaveData cardData = new DeckCardSaveData();
-            cardData.cardId = cardCount.Key;
-            cardData.count = cardCount.Value;
-            saveData.cards.Add(cardData);
+            cardData.cardId = cardCount.Key;// 카드 ID 저장
+            cardData.count = cardCount.Value;// 카드 수량 저장
+            saveData.cards.Add(cardData);// 덱 저장 목록에 추가
         }
-        string json = JsonUtility.ToJson(saveData, true);
-        File.WriteAllText(GetDeckFilePath(),json);
+        string json = JsonUtility.ToJson(saveData, true);// 저장 데이터를 JSON 문자열로 변환
+        File.WriteAllText(GetDeckFilePath(),json);// 지정된 경로에 JSON 파일 저장
         titleManager.DeckSelectScene();
         Debug.Log($"{saveData.deckIndex}번 덱을 저장했습니다.");
     }
@@ -245,8 +243,8 @@ public class DeckEditorManager : MonoBehaviour
             Debug.Log("덱 데이터를 불러올 수 없습니다.");
             return;
         }
-        currentDeck.Clear();
-        ClearDeckListItems();
+        currentDeck.Clear();// 기존 덱 데이터 초기화
+        ClearDeckListItems();// 기존 덱 UI 목록 초기화
         foreach (DeckCardSaveData savedCard in saveData.cards)
         {
             CardSetting card = FindOwnedCard(savedCard.cardId);
@@ -259,8 +257,8 @@ public class DeckEditorManager : MonoBehaviour
             for (int i = 0; i < count; i++)
             {
                 if (currentDeck.Count >= maxDeckSize)
-                    break;
-                currentDeck.Add(card);
+                    break;// 전체 덱이 30장이면 추가 중단
+                currentDeck.Add(card);// 저장된 수량만큼 카드 복원
             }
         }
         foreach (CardSetting card in currentDeck)   

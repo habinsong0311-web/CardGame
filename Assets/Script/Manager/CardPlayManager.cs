@@ -111,6 +111,7 @@ public class CardPlayManager : MonoBehaviour
             return;
         }
         bool summonSuccess = player.Field.Summon(selectedCard, slotIndex);
+        // 선택한 카드를 지정한 필드 슬롯에 소환
         if (!summonSuccess)
         {
             return;
@@ -125,8 +126,11 @@ public class CardPlayManager : MonoBehaviour
         }
 
         player.SpendLight(selectedCard.Cost);
+        // 카드 비용만큼 플레이어의 빛 차감
         selectedHand.RemoveCard(selectedCard, selectedCardView);
+        // 사용한 카드를 손패 데이터와 화면에서 제거
         ClearSelection();
+        // 카드 선택 표시와 소환 가능한 슬롯 표시 초기화
     }
     public void ClearSelection()
     {

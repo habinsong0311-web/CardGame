@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("GameManager: defeatPanel이 연결되지 않았습니다.");
         }
-        int mainDeckIndex = LoadMainDeckIndex();
+        int mainDeckIndex = LoadMainDeckIndex();// 선택한 덱 번호 불러오기
 
         if (mainDeckIndex == -1)
         {
@@ -222,5 +222,4 @@ public class GameManager : MonoBehaviour
         }
         gameMenu.SetActive(false);
     }
-
 }

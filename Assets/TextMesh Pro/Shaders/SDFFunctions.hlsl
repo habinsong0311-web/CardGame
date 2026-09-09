@@ -91,7 +91,8 @@ void ScreenSpaceRatio2_float(float4x4 projection, float4 position, float2 object
 {
 	float2 pixelSize = position.w;
 	pixelSize /= (objectScale * mul((float2x2)projection, float2(screenWidth, screenHeight)));
-	SSR = rsqrt(dot(pixelSize, pixelSize)*2) * fontScale;
+	SSR = rsqrt(dot(pixelSize, pixelSize)
+	) * fontScale;
 }
 
 // UV			: Texture coordinate of the source distance field texture

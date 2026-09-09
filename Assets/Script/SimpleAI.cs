@@ -388,6 +388,24 @@ public class SimpleAI : MonoBehaviour
     {
         changedUnits.Add(unit);
     }
+    private void OnUnitAttackAvailabilityChanged(UnitBoardCardView unit)
+    {
+        attackAvailabilityChangedUnits.Add(unit);
+    }
+    private void OnUnitDied(UnitBoardCardView unit)
+    {
+        if (unit.OwnerPlayer == enemyPlayer && unit.HasTaunt)
+        {
+            tauntTargetsChanged = true;
+        }
+        removedUnits.Add(unit);
+        changedUnits.Remove(unit);
+        attackAvailabilityChangedUnits.Remove(unit);
+        unit.StatsChanged -= OnUnitStatsChanged;
+        unit.AttackAvailabilityChanged -= OnUnitAttackAvailabilityChanged;
+        unit.UnitDied -= OnUnitDied;
+        subscribedUnits.Remove(unit);
+    }
     private void RegisterUnitEvents(UnitBoardCardView unit)
     {
         if (unit == null)
@@ -433,24 +451,8 @@ public class SimpleAI : MonoBehaviour
             tauntTargetsChanged = true;
         }
     }
-    private void OnUnitAttackAvailabilityChanged(UnitBoardCardView unit)
-    {
-        attackAvailabilityChangedUnits.Add(unit);
-    }
-    private void OnUnitDied(UnitBoardCardView unit)
-    {
-        if (unit.OwnerPlayer == enemyPlayer && unit.HasTaunt)
-        {
-            tauntTargetsChanged = true;
-        }
-        removedUnits.Add(unit);
-        changedUnits.Remove(unit);
-        attackAvailabilityChangedUnits.Remove(unit);
-        unit.StatsChanged -= OnUnitStatsChanged;
-        unit.AttackAvailabilityChanged -= OnUnitAttackAvailabilityChanged;
-        unit.UnitDied -= OnUnitDied;
-        subscribedUnits.Remove(unit);
-    }
+   
+    
     private void UpdateUnitAttackAction(UnitBoardCardView attacker, UnitBoardCardView target)
     {
         var key = (attacker, target);

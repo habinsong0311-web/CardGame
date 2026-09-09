@@ -48,16 +48,14 @@ public class TurnManager : MonoBehaviour
             return;
         }
         UpdateTurnUI();
-        Debug.Log($"{currentPlayer.PlayerName}의 턴 시작");
         CardSetting drawnCard = currentPlayer.Deck.DrawCard();
         gameManager.CheckDeckOut(currentPlayer, drawnCard);
         if (drawnCard == null)
         {
-            Debug.Log($"{currentPlayer.PlayerName}의 덱에 카드가 없어 패배했습니다.");
             return;
         }
         currentPlayer.Hand.AddCard(drawnCard);
-        currentPlayer.LightInitialize();// 빛 초기화(턴마다 하나씩 늘어나는거)
+        currentPlayer.LightInitialize();
         currentPlayer.Field.ResetAllUnitsAttack();
         if (currentPlayer == aiPlayer)
         {
